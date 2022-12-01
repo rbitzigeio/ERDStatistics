@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?scenebuilder-stylesheet ./ERDStylesheet.css?>
+
+<AnchorPane fx:id="anchorPane" prefHeight="600" prefWidth="1020" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.dpdhl.pup.ta.erd.Controller">
+    <children>
+      <BorderPane layoutX="0.0" layoutY="0.0" prefHeight="820.0" prefWidth="1220.0">
+         <top>
+            <Pane prefHeight="70.0" prefWidth="1220.0" styleClass="Pane" stylesheets="@Stylesheet.css" BorderPane.alignment="CENTER">
+               <children>
+                   <MenuBar prefHeight="25.0" prefWidth="1220.0">
+                    <menus>
+                      <Menu mnemonicParsing="false" text="File">
+                        <items>
+                          <MenuItem mnemonicParsing="false" onAction="#handleExitAction" text="Close" />
+                        </items>
+                      </Menu>
+                      <Menu fx:id="mData" mnemonicParsing="false" text="Data" />
+                      <Menu mnemonicParsing="false" text="Help">
+                        <items>
+                          <MenuItem mnemonicParsing="false" text="About" />
+                        </items>
+                      </Menu>
+                    </menus>
+                  </MenuBar>
+                  <TextField alignment="CENTER" layoutX="14.0" layoutY="32.0" prefHeight="30.0" prefWidth="1100.0" text="Statistik der Express Route Direct" />
+                  <TextField fx:id="tfDate" layoutX="1125.0" layoutY="32.0" prefHeight="30.0" prefWidth="80.0" />                  
+               </children>
+            </Pane>
+         </top>
+        
+        <center>
+            <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                <tabs>
+                    <Tab text="Statistics">
+                       <content>
+                           <VBox>
+                               <children>
+                                   <Pane fx:id="bpCenterSelection" prefHeight="95.0" prefWidth="1016.0" style="-fx-background-color: darkgrey;" BorderPane.alignment="CENTER">
+                                       <children>
+                                           <ComboBox fx:id="cbFrequence" layoutX="80.0" layoutY="10.0" onAction="#handleFrequenceAction" prefHeight="15.0" prefWidth="150.0" />
+                                           <Label layoutX="14.0" layoutY="15.0" text="Frequenz" />
+                                       </children>
+                                   </Pane>
+                                   <Pane fx:id="bpCenterChart" prefHeight="678.0" prefWidth="1016.0" />                          
+                               </children>
+                           </VBox>
+                       </content>    
+                    </Tab>
+                    <Tab text="Logs">
+                        <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                <children>
+                                    <TextArea fx:id="taLogger" prefHeight="680.0" prefWidth="1020.0" />
+                                </children>
+                            </AnchorPane>
+                        </content>
+                    </Tab>
+                </tabs>
+            </TabPane>
+        </center>
+        
+         <left>
+         <ScrollPane prefHeight="675.0" prefWidth="204.0" BorderPane.alignment="CENTER">
+            <content>
+               <TreeView fx:id="tvStatistic" prefHeight="672.0" prefWidth="227.0" />
+            </content>
+         </ScrollPane>
+         </left>
+
+         <bottom>
+         <Pane layoutY="550.0" prefHeight="50.0" prefWidth="1220.0" styleClass="Pane" stylesheets="@Stylesheet.css">
+            <children>
+               <Button layoutX="1125.0" layoutY="12.0" mnemonicParsing="false" onAction="#handleExitAction" prefHeight="30.0" prefWidth="80.0" text="Exit" />
+               <TextField fx:id="tfLog" layoutX="15.0" layoutY="12.0" prefHeight="30.0" prefWidth="1000.0" />
+               <Button fx:id="bLinearReg" layoutX="1030.0" layoutY="12.0" mnemonicParsing="false" onAction="#handleLinRegAction" prefHeight="30.0" prefWidth="80.0" text="LR" />
+            </children>
+         </Pane>
+         </bottom>
+      </BorderPane>
+    </children>
+</AnchorPane>

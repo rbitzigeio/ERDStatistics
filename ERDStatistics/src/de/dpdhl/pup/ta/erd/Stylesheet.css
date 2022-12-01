@@ -1,0 +1,25 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 27.11.2022, 12:45:39
+    Author     : rbo
+*/
+.Pane {-fx-background-color:grey;}
+/* Width of lines in Chart */
+.chart-series-line{-fx-stroke-width: 1px;}
+/* Color of Line 0 and datapoint */
+.default-color0.chart-series-line{-fx-stroke: red;}
+.default-color0.chart-line-symbol{-fx-background-color: red;}
+/* Color of Line 1 and datapoint */
+.default-color1.chart-series-line{-fx-stroke: green;}
+.default-color1.chart-line-symbol{-fx-background-color: green;}
+/* Symbolgröße */
+/*
+.chart-line-symbol{-fx-stroke-width: 1px; -fx-background-radius: 1px;}
+.default-color0.chart-line-symbol{-fx-background-color: red;}
+.default-color0.chart-symbol{-fx-background-radius: 1px;}
+.default-color1.chart-line-symbol{-fx-background-color: green; -fx-background-radius: 1px;}
+.default-color1.chart-symbol{-fx-background-radius: 0px;}
+*/
