@@ -4,6 +4,7 @@
  */
 package de.dpdhl.pup.ta.erd;
 
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -34,10 +35,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeItem.TreeModificationEvent;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -55,17 +59,21 @@ public class Controller implements Initializable {
     @FXML private TextField  tfLog;
     @FXML private Pane       bpCenterChart;
     @FXML private Pane       bpCenterSelection;
+    @FXML private Pane       pActChart;
+    @FXML private Pane       pDiffChart;
+    @FXML private Pane       pLastChart;
     @FXML private ComboBox   cbFrequence;
     @FXML private Menu       mData;
     @FXML private Button     bLinearReg;
     @FXML private TextArea   taLogger;
     
-    private int                         _frequence = 1;
-    private int                         _unit = 0; // Default unit Bits/s, 1 = %
-    private double                      _WindowX;
-    private double                      _WindowY;
-    private boolean                     _bUpdateLastLineChart = false;    
-    private File                        _lastFile;    
+    private int              _frequence = 1;
+    private int              _unit = 0; // Default unit Bits/s, 1 = %
+    private double           _WindowX;
+    private double           _WindowY;
+    private boolean          _bUpdateLastLineChart = false;
+    private boolean          _bFired = true;    
+    private File             _lastFile;    
     
     LineChart<Number,Number> lastLineChart;
     LineChart<Number,Number> linRegLineChart;
@@ -192,13 +200,14 @@ public class Controller implements Initializable {
                 bpCenterChart.getChildren().add(lineChart);
                 // show act, last and diff
                 if (_bUpdateLastLineChart && _lastLineChart != null) {
+                    /*
                     Stage stage     = new Stage();
                     Group group     = new Group();
                     Scene scene     = new Scene(group, 350,700);
                     scene.getStylesheets().add("de/dpdhl/pup/ta/erd/Stylesheet.css");
                     stage.setX(_parentWindow.getX() + anchorPane.getWidth());
                     stage.setY(_parentWindow.getY());
-
+                    
                     Pane  pane      = new Pane();
                     Pane  diffPane  = new Pane();
                     Pane  lastPane  = new Pane();
@@ -214,23 +223,43 @@ public class Controller implements Initializable {
                     lastPane.setPrefSize(300.,200.);
                     lastPane.setLayoutX(0);
                     lastPane.setLayoutY(420);
+                    */
+                    pActChart.setPrefSize(150.,100.);
+                    pActChart.setLayoutX(0);
+                    pActChart.setLayoutY(100);
 
+                    pDiffChart.setPrefSize(150.,100.);
+                    pDiffChart.setLayoutX(0);
+                    pDiffChart.setLayoutY(250);
+
+                    pLastChart.setPrefSize(150.,100.);
+                    pLastChart.setLayoutX(0);
+                    pLastChart.setLayoutY(400);
+                    
                     calculateLineCharts(lineChart, actLineChart, diffLineChart, _lastLineChart);
-                    setLayoutLineChart(actLineChart, lineChart.getTitle(), false, 300, 200, 0.0, 0.0);
-                    setLayoutLineChart(diffLineChart, "Difference", false, 300, 200, 0.0, 0.0);
-                    setLayoutLineChart(_lastLineChart, _lastLineChart.getTitle(),false, 300, 200, 0.0, 0.0);
+                    setLayoutLineChart(actLineChart, lineChart.getTitle(), false, 150, 120, 0.0, 0.0);
+                    setLayoutLineChart(diffLineChart, "Difference", false, 150, 120, 0.0, 0.0);
+                    setLayoutLineChart(_lastLineChart, _lastLineChart.getTitle(),false, 150, 120, 0.0, 0.0);
 
                     if (!lineChart.getTitle().equals(_lastLineChart.getTitle())) {
-                        pane.getChildren().add(actLineChart);
-                        diffPane.getChildren().add(diffLineChart);
-                        lastPane.getChildren().add(_lastLineChart);
+                        //pane.getChildren().add(actLineChart);
+                        //diffPane.getChildren().add(diffLineChart);
+                        //lastPane.getChildren().add(_lastLineChart);
+                        
+                        pActChart.getChildren().clear();
+                        pActChart.getChildren().add(actLineChart);
+                        pDiffChart.getChildren().clear();
+                        pDiffChart.getChildren().add(diffLineChart);
+                        pLastChart.getChildren().clear();
+                        pLastChart.getChildren().add(_lastLineChart);
 
-                        group.getChildren().addAll(pane, diffPane, lastPane);
+                        //group.getChildren().addAll(pane, diffPane, lastPane);
+                        //group.getChildren().addAll(pActChart, pDiffChart, pLastChart);
 
-                        stage.setScene(scene);
-                        stage.show();
-                        _lastStage = stage;     
-                        _alStages.add(stage);
+                        //stage.setScene(scene);
+                        //stage.show();
+                        //_lastStage = stage;     
+                        //_alStages.add(stage);
                     }
                 } else {
                     _bUpdateLastLineChart = true;
@@ -483,13 +512,36 @@ public class Controller implements Initializable {
                 lasts2 = s[2];
             }
         }
-        // TreeView - lsieten to selection change
+        // TreeView - listen to selection change
         tvStatistic.getSelectionModel().selectedItemProperty().addListener( new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-               _selectedItem = (TreeItem)newValue;
-               updateChart();               
+                if (_bFired) {
+                    System.out.println("Event");
+                    _selectedItem = (TreeItem)oldValue;
+                    updateChart();
+                }
+                _bFired = true;
             }        
+        });
+        // TreeView - listen to key event
+        tvStatistic.setOnKeyPressed(event->{
+            _bFired = false;    
+            if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP ) {
+                TreeItem tiOld = (TreeItem)tvStatistic.getSelectionModel().getSelectedItem();
+                int i  = tvStatistic.getSelectionModel().getSelectedIndex();
+                System.out.println("Item : " + i);
+                System.out.println("Item : " + tiOld.getValue().toString());
+                System.out.println("Key was pressed");
+                if (event.getCode() == KeyCode.DOWN) {
+                    tvStatistic.getSelectionModel().selectNext();
+                } else {
+                    tvStatistic.getSelectionModel().selectPrevious();
+                }
+                //TreeItem tiNew = (TreeItem)tvStatistic.getSelectionModel().getSelectedItem();
+                //TreeModificationEvent<String> tme = new TreeModificationEvent<>(TreeItem.valueChangedEvent(), tiNew);
+                //Event.fireEvent(tiNew, tme);
+           }
         });
         if (cbFrequence.getItems().isEmpty()) {
             cbFrequence.getItems().addAll("1min", "2min", "5min", "15min", "30min", "60min");
@@ -510,6 +562,9 @@ public class Controller implements Initializable {
         _alStages.clear();
         _bUpdateLastLineChart = false;
         bLinearReg.setDisable(true);
+        pActChart.getChildren().clear();
+        pDiffChart.getChildren().clear();
+        pLastChart.getChildren().clear();
     }
     //--------------------------------
     // Central logging of information
