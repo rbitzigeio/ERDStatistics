@@ -21,6 +21,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,18 +34,23 @@ import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeItem.TreeModificationEvent;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 /**
  *
@@ -474,9 +480,9 @@ public class Controller implements Initializable {
         String lasts0 = "";
         String lasts1 = "";
         String lasts2 = "";
-        TreeItem<String> item0 = new TreeItem();
-        TreeItem<String> item1 = new TreeItem();
-        TreeItem<String> item2 = new TreeItem();
+        TreeItem<String> item0 = null;
+        TreeItem<String> item1 = null;
+        TreeItem<String> item2 = null;
         for (String fileName : alFiles) {
             String[] s = fileName.split("\\.");            
             if (!s[0].equals(lasts0)) {
@@ -492,6 +498,30 @@ public class Controller implements Initializable {
             if (!s[2].equals(lasts2)) {
                 item2 = new TreeItem(s[2]);
                 item1.getChildren().add(item2);
+                item2.addEventHandler(MouseEvent.MOUSE_RELEASED, e->{
+                    if (e.getButton()==MouseButton.SECONDARY) {
+                        System.out.println("Selection started!");
+                        TreeItem<String> selected = (TreeItem)e.getSource();
+                        if (selected!=null){
+                            ContextMenu datePeriod = new ContextMenu();
+                            MenuItem startItem = new MenuItem("set Startdate");
+                            MenuItem stopItem = new MenuItem("set Enddate");
+                            startItem.setOnAction(new EventHandler(){
+                                @Override
+                                public void handle(Event e) {
+                                    System.out.println("Start date : ");
+                                }
+                            });
+                            stopItem.setOnAction(new EventHandler(){
+                                @Override
+                                public void handle(Event e) {
+                                    System.out.println("Start date : ");
+                                }
+                            });
+                            datePeriod.getItems().addAll(startItem, stopItem);
+                        }
+                    }    
+                });
                 lasts2 = s[2];
             }
         }
@@ -500,6 +530,30 @@ public class Controller implements Initializable {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                 _selectedItem = (TreeItem)newValue;
+                _selectedItem.addEventHandler(MouseEvent.MOUSE_RELEASED, e->{
+                    if (e.getButton()==MouseButton.SECONDARY) {
+                        System.out.println("Selection started!");
+                        TreeItem<String> selected = (TreeItem)e.getSource();
+                        if (selected!=null){
+                            ContextMenu datePeriod = new ContextMenu();
+                            MenuItem startItem = new MenuItem("set Startdate");
+                            MenuItem stopItem = new MenuItem("set Enddate");
+                            startItem.setOnAction(new EventHandler(){
+                                @Override
+                                public void handle(Event e) {
+                                    System.out.println("Start date : ");
+                                }
+                            });
+                            stopItem.setOnAction(new EventHandler(){
+                                @Override
+                                public void handle(Event e) {
+                                    System.out.println("Start date : ");
+                                }
+                            });
+                            datePeriod.getItems().addAll(startItem, stopItem);
+                        }
+                    }    
+                });
                 updateChart();
             }        
         });
@@ -526,8 +580,6 @@ public class Controller implements Initializable {
             cbFrequence.getSelectionModel().selectFirst();
         }
     }
-    //---------------------------------------------------
-    // Clear data to initial point by changing selection
     //
     private void clear() {
         if (_lastStage != null) {
@@ -558,4 +610,24 @@ public class Controller implements Initializable {
         }
     }
 
+    private static class TreeFieldTreeCellImpl extends TreeCell<String> {
+        private final ContextMenu datePeriod = new ContextMenu();
+        
+        public TreeFieldTreeCellImpl() {
+            MenuItem startItem = new MenuItem("set Startdate");
+            MenuItem stopItem = new MenuItem("set Enddate");
+            
+            startItem.setOnAction(new EventHandler(){
+                public void handle(Event e) {
+                    System.out.println("Start date : ");
+                }
+            });
+            stopItem.setOnAction(new EventHandler(){
+                public void handle(Event e) {
+                    System.out.println("Start date : ");
+                }
+            });
+            datePeriod.getItems().addAll(startItem, stopItem);
+        }
+    }
 }
