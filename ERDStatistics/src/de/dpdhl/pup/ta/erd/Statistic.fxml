@@ -8,13 +8,13 @@
 <?import javafx.scene.layout.*?>
 <?scenebuilder-stylesheet ./ERDStylesheet.css?>
 
-<AnchorPane fx:id="anchorPane" prefHeight="600" prefWidth="1420.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.dpdhl.pup.ta.erd.Controller">
+<AnchorPane fx:id="anchorPane" prefHeight="600" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.dpdhl.pup.ta.erd.Controller">
     <children>
-        <BorderPane layoutX="0.0" layoutY="0.0" prefHeight="620.0" prefWidth="1520.0">
+        <BorderPane layoutX="0.0" layoutY="0.0" prefHeight="620.0" prefWidth="1200.0">
             <top>
-                <Pane prefHeight="65.0" prefWidth="1469.0" styleClass="Pane" stylesheets="@Stylesheet.css" BorderPane.alignment="CENTER">
+                <Pane prefHeight="65.0" prefWidth="1200.0" styleClass="Pane" stylesheets="@Stylesheet.css" BorderPane.alignment="CENTER">
                     <children>
-                        <MenuBar prefHeight="25.0" prefWidth="1520.0">
+                        <MenuBar prefHeight="25.0" prefWidth="1200.0">
                             <menus>
                                 <Menu mnemonicParsing="false" text="File">
                                     <items>
@@ -29,8 +29,8 @@
                                 </Menu>
                             </menus>
                         </MenuBar>
-                        <TextField alignment="CENTER" layoutX="10.0" layoutY="30.0" prefHeight="30.0" prefWidth="1400.0" text="Statistik der Express Route Direct" />
-                        <TextField fx:id="tfDate" layoutX="1425.0" layoutY="30.0" prefHeight="30.0" prefWidth="80.0" />                  
+                        <TextField alignment="CENTER" layoutX="10.0" layoutY="30.0" prefHeight="30.0" prefWidth="1089.0" text="Statistik der Express Route Direct" />
+                        <TextField fx:id="tfDate" layoutX="1113.0" layoutY="30.0" prefHeight="30.0" prefWidth="80.0" />                  
                     </children>
                 </Pane>
             </top>
@@ -44,19 +44,19 @@
             </left>
 
             <center>
-                <TabPane prefHeight="500.0" prefWidth="900.0" style="-fx-background-color: lightgrey;" tabClosingPolicy="UNAVAILABLE">
+                <TabPane prefHeight="505.0" prefWidth="1000.0" style="-fx-background-color: lightgrey;" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                         <Tab text="Statistics">
                            <content>
                                <VBox prefHeight="741.0" prefWidth="916.0">
                                    <children>
-                                       <Pane fx:id="bpCenterSelection" prefHeight="44.0" prefWidth="916.0" style="-fx-background-color: darkgrey;" BorderPane.alignment="CENTER">
+                                       <Pane fx:id="bpCenterSelection" prefHeight="43.0" prefWidth="1000.0" style="-fx-background-color: darkgrey;" BorderPane.alignment="CENTER">
                                            <children>
                                                <ComboBox fx:id="cbFrequence" layoutX="80.0" layoutY="10.0" onAction="#handleFrequenceAction" prefHeight="15.0" prefWidth="150.0" />
                                                <Label layoutX="14.0" layoutY="15.0" text="Frequenz" />
                                            </children>
                                        </Pane>
-                                       <Pane fx:id="bpCenterChart" prefHeight="443.0" prefWidth="1057.0" />                          
+                                       <Pane fx:id="bpCenterChart" prefHeight="435.0" prefWidth="1000.0" />                          
                                    </children>
                                </VBox>
                            </content>    
@@ -73,23 +73,13 @@
                     </tabs>
                 </TabPane>
             </center>
-
-            <right>
-                <VBox prefHeight="400.0" prefWidth="200.0" style="-fx-background-color: lightgrey;" BorderPane.alignment="CENTER">
-                    <children>
-                        <Pane fx:id="pActChart" prefHeight="28.0" prefWidth="100.0" style="-fx-background-color: lightgrey;" />
-                        <Pane fx:id="pDiffChart" prefHeight="45.0" prefWidth="100.0" style="-fx-background-color: lightgrey;" />
-                        <Pane fx:id="pLastChart" prefHeight="435.0" prefWidth="200.0" style="-fx-background-color: lightgrey;" />
-                    </children>
-                </VBox>
-            </right>
         
             <bottom>
-                <Pane layoutY="550.0" prefHeight="50.0" prefWidth="1220.0" styleClass="Pane" stylesheets="@Stylesheet.css">
+                <Pane layoutY="550.0" prefHeight="50.0" prefWidth="1200.0" styleClass="Pane" stylesheets="@Stylesheet.css">
                     <children>
-                        <Button layoutX="1426.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleExitAction" prefHeight="30.0" prefWidth="80.0" text="Exit" />
-                        <TextField fx:id="tfLog" layoutX="10.0" layoutY="10.0" prefHeight="30.0" prefWidth="1309.0" />
-                        <Button fx:id="bLinearReg" layoutX="1336.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleLinRegAction" prefHeight="30.0" prefWidth="80.0" text="LR" />
+                        <Button layoutX="1106.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleExitAction" prefHeight="30.0" prefWidth="80.0" text="Exit" />
+                        <TextField fx:id="tfLog" layoutX="10.0" layoutY="10.0" prefHeight="30.0" prefWidth="998.0" />
+                        <Button fx:id="bLinearReg" layoutX="1015.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleLinRegAction" prefHeight="30.0" prefWidth="80.0" text="LR" />
                     </children>
                 </Pane>
             </bottom>

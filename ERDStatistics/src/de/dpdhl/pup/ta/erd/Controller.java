@@ -59,9 +59,6 @@ public class Controller implements Initializable {
     @FXML private TextField  tfLog;
     @FXML private Pane       bpCenterChart;
     @FXML private Pane       bpCenterSelection;
-    @FXML private Pane       pActChart;
-    @FXML private Pane       pDiffChart;
-    @FXML private Pane       pLastChart;
     @FXML private ComboBox   cbFrequence;
     @FXML private Menu       mData;
     @FXML private Button     bLinearReg;
@@ -71,9 +68,9 @@ public class Controller implements Initializable {
     private int              _unit = 0; // Default unit Bits/s, 1 = %
     private double           _WindowX;
     private double           _WindowY;
-    private boolean          _bUpdateLastLineChart = false;
-    private boolean          _bFired = true;    
+    private boolean          _bUpdateLastLineChart = false;   
     private File             _lastFile;    
+    private Model            _model; 
     
     LineChart<Number,Number> lastLineChart;
     LineChart<Number,Number> linRegLineChart;
@@ -81,9 +78,7 @@ public class Controller implements Initializable {
     Stage                    lastStage;
     File                     lastFile;
     ArrayList<Stage>         alStages = new ArrayList<>();
-    
-    private Model _model; 
-    
+
     private Stage                       _parentWindow;
     private Stage                       _lastStage;
     private ArrayList<Stage>            _alStages = new ArrayList<>();
@@ -200,10 +195,10 @@ public class Controller implements Initializable {
                 bpCenterChart.getChildren().add(lineChart);
                 // show act, last and diff
                 if (_bUpdateLastLineChart && _lastLineChart != null) {
-                    /*
+                    
                     Stage stage     = new Stage();
                     Group group     = new Group();
-                    Scene scene     = new Scene(group, 350,700);
+                    Scene scene     = new Scene(group, 320,anchorPane.getHeight());
                     scene.getStylesheets().add("de/dpdhl/pup/ta/erd/Stylesheet.css");
                     stage.setX(_parentWindow.getX() + anchorPane.getWidth());
                     stage.setY(_parentWindow.getY());
@@ -211,55 +206,43 @@ public class Controller implements Initializable {
                     Pane  pane      = new Pane();
                     Pane  diffPane  = new Pane();
                     Pane  lastPane  = new Pane();
-
+                    
                     pane.setPrefSize(300.,200.);
                     pane.setLayoutX(0);
                     pane.setLayoutY(0);
 
                     diffPane.setPrefSize(300.,200.);
                     diffPane.setLayoutX(0);
-                    diffPane.setLayoutY(210);
+                    diffPane.setLayoutY(200);
 
                     lastPane.setPrefSize(300.,200.);
                     lastPane.setLayoutX(0);
-                    lastPane.setLayoutY(420);
-                    */
-                    pActChart.setPrefSize(150.,100.);
-                    pActChart.setLayoutX(0);
-                    pActChart.setLayoutY(100);
-
-                    pDiffChart.setPrefSize(150.,100.);
-                    pDiffChart.setLayoutX(0);
-                    pDiffChart.setLayoutY(250);
-
-                    pLastChart.setPrefSize(150.,100.);
-                    pLastChart.setLayoutX(0);
-                    pLastChart.setLayoutY(400);
+                    lastPane.setLayoutY(400);
                     
                     calculateLineCharts(lineChart, actLineChart, diffLineChart, _lastLineChart);
-                    setLayoutLineChart(actLineChart, lineChart.getTitle(), false, 150, 120, 0.0, 0.0);
-                    setLayoutLineChart(diffLineChart, "Difference", false, 150, 120, 0.0, 0.0);
-                    setLayoutLineChart(_lastLineChart, _lastLineChart.getTitle(),false, 150, 120, 0.0, 0.0);
+                    setLayoutLineChart(actLineChart, lineChart.getTitle(), false, 300, 200, 0.0, 0.0);
+                    setLayoutLineChart(diffLineChart, "Difference", false, 300, 200, 0.0, 0.0);
+                    setLayoutLineChart(_lastLineChart, _lastLineChart.getTitle(),false, 300, 200, 0.0, 0.0);
 
                     if (!lineChart.getTitle().equals(_lastLineChart.getTitle())) {
                         //pane.getChildren().add(actLineChart);
                         //diffPane.getChildren().add(diffLineChart);
                         //lastPane.getChildren().add(_lastLineChart);
                         
-                        pActChart.getChildren().clear();
-                        pActChart.getChildren().add(actLineChart);
-                        pDiffChart.getChildren().clear();
-                        pDiffChart.getChildren().add(diffLineChart);
-                        pLastChart.getChildren().clear();
-                        pLastChart.getChildren().add(_lastLineChart);
-
-                        //group.getChildren().addAll(pane, diffPane, lastPane);
+                        pane.getChildren().clear();
+                        pane.getChildren().add(actLineChart);
+                        diffPane.getChildren().clear();
+                        diffPane.getChildren().add(diffLineChart);
+                        lastPane.getChildren().clear();
+                        lastPane.getChildren().add(_lastLineChart);
+                        //pLastChart.getChildren().addAll(actLineChart, diffLineChart, _lastLineChart);
+                        group.getChildren().addAll(pane, diffPane, lastPane);
                         //group.getChildren().addAll(pActChart, pDiffChart, pLastChart);
 
-                        //stage.setScene(scene);
-                        //stage.show();
-                        //_lastStage = stage;     
-                        //_alStages.add(stage);
+                        stage.setScene(scene);
+                        stage.show();
+                        _lastStage = stage;     
+                        _alStages.add(stage);
                     }
                 } else {
                     _bUpdateLastLineChart = true;
@@ -516,17 +499,12 @@ public class Controller implements Initializable {
         tvStatistic.getSelectionModel().selectedItemProperty().addListener( new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                if (_bFired) {
-                    System.out.println("Event");
-                    _selectedItem = (TreeItem)oldValue;
-                    updateChart();
-                }
-                _bFired = true;
+                _selectedItem = (TreeItem)newValue;
+                updateChart();
             }        
         });
         // TreeView - listen to key event
         tvStatistic.setOnKeyPressed(event->{
-            _bFired = false;    
             if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP ) {
                 TreeItem tiOld = (TreeItem)tvStatistic.getSelectionModel().getSelectedItem();
                 int i  = tvStatistic.getSelectionModel().getSelectedIndex();
@@ -545,7 +523,7 @@ public class Controller implements Initializable {
         });
         if (cbFrequence.getItems().isEmpty()) {
             cbFrequence.getItems().addAll("1min", "2min", "5min", "15min", "30min", "60min");
-            cbFrequence.getSelectionModel().selectFirst();    
+            cbFrequence.getSelectionModel().selectFirst();
         }
     }
     //---------------------------------------------------
@@ -562,9 +540,6 @@ public class Controller implements Initializable {
         _alStages.clear();
         _bUpdateLastLineChart = false;
         bLinearReg.setDisable(true);
-        pActChart.getChildren().clear();
-        pDiffChart.getChildren().clear();
-        pLastChart.getChildren().clear();
     }
     //--------------------------------
     // Central logging of information
