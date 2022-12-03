@@ -4,7 +4,6 @@
  */
 package de.dpdhl.pup.ta.erd;
 
-import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -37,20 +36,16 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeItem.TreeModificationEvent;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 /**
  *
@@ -473,6 +468,22 @@ public class Controller implements Initializable {
         } catch (IOException ex) {
             
         }
+        ContextMenu datePeriod = new ContextMenu();
+        MenuItem startItem = new MenuItem("set Startdate");
+        MenuItem stopItem = new MenuItem("set Enddate");
+        startItem.setOnAction(new EventHandler(){
+            @Override
+            public void handle(Event e) {
+                System.out.println("Start date : " + _selectedItem.getValue());
+            }
+        });
+        stopItem.setOnAction(new EventHandler(){
+            @Override
+            public void handle(Event e) {
+                System.out.println("Start date : " + _selectedItem.getValue());
+            }
+        });
+        datePeriod.getItems().addAll(startItem, stopItem);
         String dir = _model.getCsvDir();
         tfLog.setText(dir);
         log("Selected dir : " + dir);
@@ -498,30 +509,6 @@ public class Controller implements Initializable {
             if (!s[2].equals(lasts2)) {
                 item2 = new TreeItem(s[2]);
                 item1.getChildren().add(item2);
-                item2.addEventHandler(MouseEvent.MOUSE_RELEASED, e->{
-                    if (e.getButton()==MouseButton.SECONDARY) {
-                        System.out.println("Selection started!");
-                        TreeItem<String> selected = (TreeItem)e.getSource();
-                        if (selected!=null){
-                            ContextMenu datePeriod = new ContextMenu();
-                            MenuItem startItem = new MenuItem("set Startdate");
-                            MenuItem stopItem = new MenuItem("set Enddate");
-                            startItem.setOnAction(new EventHandler(){
-                                @Override
-                                public void handle(Event e) {
-                                    System.out.println("Start date : ");
-                                }
-                            });
-                            stopItem.setOnAction(new EventHandler(){
-                                @Override
-                                public void handle(Event e) {
-                                    System.out.println("Start date : ");
-                                }
-                            });
-                            datePeriod.getItems().addAll(startItem, stopItem);
-                        }
-                    }    
-                });
                 lasts2 = s[2];
             }
         }
@@ -530,30 +517,6 @@ public class Controller implements Initializable {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                 _selectedItem = (TreeItem)newValue;
-                _selectedItem.addEventHandler(MouseEvent.MOUSE_RELEASED, e->{
-                    if (e.getButton()==MouseButton.SECONDARY) {
-                        System.out.println("Selection started!");
-                        TreeItem<String> selected = (TreeItem)e.getSource();
-                        if (selected!=null){
-                            ContextMenu datePeriod = new ContextMenu();
-                            MenuItem startItem = new MenuItem("set Startdate");
-                            MenuItem stopItem = new MenuItem("set Enddate");
-                            startItem.setOnAction(new EventHandler(){
-                                @Override
-                                public void handle(Event e) {
-                                    System.out.println("Start date : ");
-                                }
-                            });
-                            stopItem.setOnAction(new EventHandler(){
-                                @Override
-                                public void handle(Event e) {
-                                    System.out.println("Start date : ");
-                                }
-                            });
-                            datePeriod.getItems().addAll(startItem, stopItem);
-                        }
-                    }    
-                });
                 updateChart();
             }        
         });
@@ -579,6 +542,15 @@ public class Controller implements Initializable {
             cbFrequence.getItems().addAll("1min", "2min", "5min", "15min", "30min", "60min");
             cbFrequence.getSelectionModel().selectFirst();
         }
+        
+        tvStatistic.setContextMenu(datePeriod);
+        tvStatistic.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>(){
+            @Override
+            public void handle(ContextMenuEvent event) {
+                System.out.println("Handle context menu");
+                datePeriod.show(tvStatistic, event.getScreenX(), event.getScreenY());
+            }            
+        });
     }
     //
     private void clear() {
