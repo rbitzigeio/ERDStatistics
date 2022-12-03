@@ -474,13 +474,25 @@ public class Controller implements Initializable {
         startItem.setOnAction(new EventHandler(){
             @Override
             public void handle(Event e) {
-                System.out.println("Start date : " + _selectedItem.getValue());
+                TreeItem tiMonth = _selectedItem.getParent();
+                if (tiMonth != null) {
+                    TreeItem tiYear = tiMonth.getParent();
+                    String startDate = tiYear.getValue().toString() + "." + tiMonth.getValue().toString() + "." + _selectedItem.getValue();
+                    startItem.setText(startDate);
+                    System.out.println("Start date : " + startDate);
+                }
             }
         });
         stopItem.setOnAction(new EventHandler(){
             @Override
             public void handle(Event e) {
-                System.out.println("Start date : " + _selectedItem.getValue());
+                TreeItem tiMonth = _selectedItem.getParent();
+                if (tiMonth != null) {
+                    TreeItem tiYear = tiMonth.getParent();
+                    String startDate = tiYear.getValue().toString() + "." + tiMonth.getValue().toString() + "." + _selectedItem.getValue();
+                    startItem.setText("Set Startdate");
+                    System.out.println("End date : " + startDate);
+                }
             }
         });
         datePeriod.getItems().addAll(startItem, stopItem);
