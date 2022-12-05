@@ -10,6 +10,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,6 +26,7 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
@@ -34,6 +37,7 @@ import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
@@ -43,6 +47,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -64,6 +69,8 @@ public class Controller implements Initializable {
     @FXML private Menu       mData;
     @FXML private Button     bLinearReg;
     @FXML private TextArea   taLogger;
+    @FXML private Label      lBandWidth;
+    @FXML private Label      lDate;
     
     private int              _frequence = 1;
     private int              _unit = 0; // Default unit Bits/s, 1 = %
@@ -191,9 +198,10 @@ public class Controller implements Initializable {
                     sUnit = " (in %)"; 
                 }
                 // Decribe Chart: Date and Unit
-                lineChart.setTitle("Bandbreite : " + selectedDDItem.getValue() + "." + selectedMMItem.getValue() + "." + selectedYYYYItem.getValue() + sUnit);
+                lineChart.setTitle("Bandwidth : " + selectedDDItem.getValue() + "." + selectedMMItem.getValue() + "." + selectedYYYYItem.getValue() + sUnit);
                 bpCenterChart.getChildren().clear();
                 bpCenterChart.getChildren().add(lineChart);
+                lineChartsActions(lineChart, xAxis, yAxis);
                 // show act, last and diff
                 if (_bUpdateLastLineChart && _lastLineChart != null) {
                     
@@ -278,6 +286,7 @@ public class Controller implements Initializable {
                         i++;
                         String[] s0  = s[3].split("\\.");
                         String[] s1  = s[4].split("\\.");
+                        String day = s[1].substring(1) + s[2].substring(0,11);
                         int valueIn  = Integer.parseInt(s0[0]);
                         int valueOut = Integer.parseInt(s1[0]);
                         sumValueIn   = sumValueIn  + valueIn; 
@@ -291,8 +300,10 @@ public class Controller implements Initializable {
                                 //valueOut    = valueOut / 1000 / 1000; // MBits/s
                             }
                             seriesIn.getData().add(new XYChart.Data(iSum/_frequence, sumValueIn/_frequence)); // Average
+                            //seriesIn.getData().add(new XYChart.Data(day, sumValueIn/_frequence)); // Average
                             //seriesIn.getData().add(new XYChart.Data(i, valueIn));
                             seriesOut.getData().add(new XYChart.Data(iSum/_frequence, sumValueOut/_frequence)); // Average
+                            //seriesOut.getData().add(new XYChart.Data(day, sumValueOut/_frequence)); // Average
                             //seriesOut.getData().add(new XYChart.Data(i, valueOut));
                             sumValueIn  = 0;
                             sumValueOut = 0;
@@ -545,10 +556,7 @@ public class Controller implements Initializable {
                 } else {
                     tvStatistic.getSelectionModel().selectPrevious();
                 }
-                //TreeItem tiNew = (TreeItem)tvStatistic.getSelectionModel().getSelectedItem();
-                //TreeModificationEvent<String> tme = new TreeModificationEvent<>(TreeItem.valueChangedEvent(), tiNew);
-                //Event.fireEvent(tiNew, tme);
-           }
+            }
         });
         if (cbFrequence.getItems().isEmpty()) {
             cbFrequence.getItems().addAll("1min", "2min", "5min", "15min", "30min", "60min");
@@ -592,6 +600,29 @@ public class Controller implements Initializable {
         } else {
             System.out.println("Missing initialize Logging.");
         }
+    }
+
+    /*
+    * Click in chart
+    * Result is value of x- and y-axis. Result is bandwidth and time
+    */
+    private void lineChartsActions(LineChart<Number, Number> lineChart, NumberAxis xAxis, NumberAxis yAxis) {
+        lineChart.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                Point2D mouseSceneCoords = new Point2D(event.getSceneX(), event.getSceneY());
+                double x = xAxis.sceneToLocal(mouseSceneCoords).getX();
+                double y = yAxis.sceneToLocal(mouseSceneCoords).getY();
+                int ix = xAxis.getValueForDisplay(x).intValue();
+                String iy = Integer.toString(yAxis.getValueForDisplay(y).intValue());
+                LocalTime lt = LocalTime.of(0, 0,0  );
+                lt = lt.plusMinutes(ix);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern( "H:mm:ss" );
+                String sDate = formatter.format( lt );
+                lDate.setText(sDate);
+                lBandWidth.setText(iy);
+            }
+        });
     }
 
     private static class TreeFieldTreeCellImpl extends TreeCell<String> {

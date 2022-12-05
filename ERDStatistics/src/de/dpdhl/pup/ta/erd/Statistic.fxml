@@ -52,8 +52,12 @@
                                    <children>
                                        <Pane fx:id="bpCenterSelection" prefHeight="43.0" prefWidth="1000.0" style="-fx-background-color: darkgrey;" BorderPane.alignment="CENTER">
                                            <children>
-                                               <ComboBox fx:id="cbFrequence" layoutX="80.0" layoutY="10.0" onAction="#handleFrequenceAction" prefHeight="15.0" prefWidth="150.0" />
                                                <Label layoutX="14.0" layoutY="15.0" text="Frequenz" />
+                                               <ComboBox fx:id="cbFrequence" layoutX="80.0" layoutY="10.0" onAction="#handleFrequenceAction" prefHeight="15.0" prefWidth="150.0" />
+                                               <Label layoutX="250.0" layoutY="15.0" text="Bandwidth:" />
+                                               <Label layoutX="320.0" fx:id="lBandWidth" layoutY="15.0" text="" />
+                                               <Label layoutX="400.0" layoutY="15.0" text="Datum:" />
+                                               <Label layoutX="450.0" fx:id="lDate" layoutY="15.0" text="" />
                                            </children>
                                        </Pane>
                                        <Pane fx:id="bpCenterChart" prefHeight="435.0" prefWidth="1000.0" />                          
