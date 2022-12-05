@@ -166,6 +166,8 @@ public class Controller implements Initializable {
     private void updateChart() {
         if (_selectedItem != null) {
             bLinearReg.setDisable(false);
+            lDate.setText("");
+            lBandWidth.setText("");
             TreeItem<String> selectedDDItem   = (TreeItem<String>) _selectedItem;
             TreeItem<String> selectedMMItem   = (TreeItem<String>) selectedDDItem.getParent();
             TreeItem<String> selectedYYYYItem = (TreeItem<String>) selectedMMItem.getParent();
@@ -584,6 +586,8 @@ public class Controller implements Initializable {
         _alStages.clear();
         _bUpdateLastLineChart = false;
         bLinearReg.setDisable(true);
+        lDate.setText("");
+        lBandWidth.setText("");
     }
     //--------------------------------
     // Central logging of information
