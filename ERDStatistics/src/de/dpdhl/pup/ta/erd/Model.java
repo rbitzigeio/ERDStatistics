@@ -82,6 +82,24 @@ public class Model {
         return _lCsv;
     }
     
+    public ArrayList<File> getFilesBetween(String startKey, String endKey) {
+        ArrayList<File> alFiles = new ArrayList();
+        boolean b = false;
+        for (String key : getSortedERDDataFiles()) {
+            if (!b && key.equals(startKey)) {
+                b = true;
+            }
+            if (b && !alFiles.contains(_mCsv.get(key))) {
+                alFiles.add(_mCsv.get(key));
+            }
+            if (b && key.equals(endKey)) {
+                b = false;
+                break;
+            }
+        }
+        return alFiles;
+    }
+    
     public File getCsvDataFiles(String key) {
         if (_mCsv.containsKey(key)) {
             return _mCsv.get(key);

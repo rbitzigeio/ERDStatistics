@@ -492,7 +492,7 @@ public class Controller implements Initializable {
                     TreeItem tiYear = tiMonth.getParent();
                     String startDate = tiYear.getValue().toString() + "." + tiMonth.getValue().toString() + "." + _selectedItem.getValue();
                     startItem.setText(startDate);
-                    System.out.println("Start date : " + startDate);
+                    log("Start date : " + startDate + " selected");
                 }
             }
         });
@@ -502,9 +502,19 @@ public class Controller implements Initializable {
                 TreeItem tiMonth = _selectedItem.getParent();
                 if (tiMonth != null) {
                     TreeItem tiYear = tiMonth.getParent();
-                    String startDate = tiYear.getValue().toString() + "." + tiMonth.getValue().toString() + "." + _selectedItem.getValue();
+                    String endDate = tiYear.getValue().toString() + "." + tiMonth.getValue().toString() + "." + _selectedItem.getValue();
+                    String startDate = startItem.getText();
                     startItem.setText("Set Startdate");
-                    System.out.println("End date : " + startDate);
+                    log("End date : " + endDate + " selected");
+                    log("Calculate perid");
+                    File fStart = _model.getCsvDataFiles(startDate);
+                    File fEnd   = _model.getCsvDataFiles(endDate);
+                    log("Startfile : " + fStart.getName());
+                    log("Endfile : " + fEnd.getName());
+                    ArrayList<File> alFiles = _model.getFilesBetween(startDate, endDate);
+                    for (File f : alFiles) {
+                        log("Found : " + f.getName());
+                    }
                 }
             }
         });
@@ -569,7 +579,7 @@ public class Controller implements Initializable {
         tvStatistic.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>(){
             @Override
             public void handle(ContextMenuEvent event) {
-                System.out.println("Handle context menu");
+                log("Handle context menu");
                 datePeriod.show(tvStatistic, event.getScreenX(), event.getScreenY());
             }            
         });
