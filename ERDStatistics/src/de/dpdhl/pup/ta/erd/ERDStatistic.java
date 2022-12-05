@@ -8,6 +8,6 @@ package de.dpdhl.pup.ta.erd;
  *
  * @author cyqjefe0019
  */
-public class ERDStatitic {
+public class ERDStatistic {
     
 }
