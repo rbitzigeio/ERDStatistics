@@ -67,11 +67,9 @@
                         </Tab>
                         <Tab text="Logs">
                             <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                    <children>
-                                        <TextArea fx:id="taLogger" prefHeight="680.0" prefWidth="1020.0" />
-                                    </children>
-                                </AnchorPane>
+                                <ScrollPane minHeight="0.0" minWidth="0.0" prefHeight="680.0" prefWidth="1020.0">
+                                    <TextArea fx:id="taLogger" prefHeight="680.0" prefWidth="1020.0" />
+                                </ScrollPane>
                             </content>
                         </Tab>
                     </tabs>

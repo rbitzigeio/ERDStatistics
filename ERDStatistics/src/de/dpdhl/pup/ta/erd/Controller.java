@@ -506,15 +506,46 @@ public class Controller implements Initializable {
                     String startDate = startItem.getText();
                     startItem.setText("Set Startdate");
                     log("End date : " + endDate + " selected");
-                    log("Calculate perid");
+                    log("Calculate period");
                     File fStart = _model.getCsvDataFiles(startDate);
                     File fEnd   = _model.getCsvDataFiles(endDate);
                     log("Startfile : " + fStart.getName());
                     log("Endfile : " + fEnd.getName());
                     ArrayList<File> alFiles = _model.getFilesBetween(startDate, endDate);
+                    ERDStatistic erdTotal = null;
                     for (File f : alFiles) {
                         log("Found : " + f.getName());
+                        if (erdTotal == null) {
+                            erdTotal = new ERDStatistic(f);
+                        } else {
+                            ERDStatistic erd = new ERDStatistic(f);
+                            erdTotal.add(erd);
+                        }
                     }
+                    Series sIn  = erdTotal.getSeriesIn();
+                    Series sOut = erdTotal.getSeriesOut();
+                    log("Total size for period : " + sIn.getData().size());
+                   
+                    final NumberAxis                 xAxis         = new NumberAxis();   
+                    final NumberAxis                 yAxis         = new NumberAxis();   
+                    final LineChart<Number,Number>   lineChart     = new LineChart<>(xAxis,yAxis); 
+                    lineChart.getData().clear();
+                    lineChart.getData().addAll(sIn, sOut);
+                    lineChart.setTitle(startDate + " - " + endDate);
+                    setLayoutLineChart(lineChart, lineChart.getTitle(), false, bpCenterChart.getWidth(), bpCenterChart.getHeight(), 0.0, 0.0);
+                    // Check Unit fron data file  
+                    String sUnit;
+                    if (_unit == 0) {
+                        sUnit = " (in MBit/s)"; 
+                    } else {
+                        sUnit = " (in %)"; 
+                    }
+                    // Decribe Chart: Date and Unit                  
+                    bpCenterChart.getChildren().clear();
+                    bpCenterChart.getChildren().add(lineChart);
+                    lineChartsActions(lineChart, xAxis, yAxis);
+                    _selectedLineChart = lineChart;
+                    linRegLineChart    = lineChart;
                 }
             }
         });
@@ -637,26 +668,5 @@ public class Controller implements Initializable {
                 lBandWidth.setText(iy);
             }
         });
-    }
-
-    private static class TreeFieldTreeCellImpl extends TreeCell<String> {
-        private final ContextMenu datePeriod = new ContextMenu();
-        
-        public TreeFieldTreeCellImpl() {
-            MenuItem startItem = new MenuItem("set Startdate");
-            MenuItem stopItem = new MenuItem("set Enddate");
-            
-            startItem.setOnAction(new EventHandler(){
-                public void handle(Event e) {
-                    System.out.println("Start date : ");
-                }
-            });
-            stopItem.setOnAction(new EventHandler(){
-                public void handle(Event e) {
-                    System.out.println("Start date : ");
-                }
-            });
-            datePeriod.getItems().addAll(startItem, stopItem);
-        }
     }
 }

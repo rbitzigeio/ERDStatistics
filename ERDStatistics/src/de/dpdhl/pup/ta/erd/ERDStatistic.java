@@ -7,6 +7,7 @@ package de.dpdhl.pup.ta.erd;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 
@@ -16,11 +17,14 @@ import javafx.scene.chart.XYChart.Series;
  */
 public class ERDStatistic {
     
+    private static Logger _LOGGER = Logger.getInstance();
+    
     private File _fileName;
     
     Series  _seriesIn  = new XYChart.Series();
     Series  _seriesOut = new XYChart.Series();
     int     _unit      = 0; // Default Unit Bit/s
+    String  _day       = "";
      
     public ERDStatistic() {
         _seriesIn.setName("In-Bound");
@@ -37,6 +41,10 @@ public class ERDStatistic {
         readFile(f);
     }
     
+     public File getFile() {
+        return _fileName;
+    }
+    
     public Series[] getSeries() {
         Series[] series = {_seriesIn, _seriesOut};
         return series;
@@ -47,11 +55,32 @@ public class ERDStatistic {
     }
     
     public Series getSeriesOut() {
-        return _seriesIn;
+        return _seriesOut;
     }
     
     public int getUnit() {
         return _unit;
+    }
+    
+    public void add(ERDStatistic erd) {
+        log("Concat data of " + erd._day + " to " + _day);    
+        Series seriesIn  = erd.getSeriesIn();
+        Series seriesOut = erd.getSeriesOut();
+        ObservableList olSeriesIn  = seriesIn.getData();
+        ObservableList olSeriesOut = seriesOut.getData();
+        int size  = olSeriesIn.size();
+        int size0 =_seriesIn.getData().size() + 1;
+        for (int i=0; i<size; i++) {
+            XYChart.Data dataIn  = (XYChart.Data)olSeriesIn.get(i);
+            XYChart.Data dataOut = (XYChart.Data)olSeriesOut.get(i);
+            Integer xIn  = Integer.valueOf(dataIn.getXValue().toString());
+            Integer xOut = Integer.valueOf(dataOut.getXValue().toString());   
+            Integer yIn  = Integer.valueOf(dataIn.getYValue().toString());
+            Integer yOut = Integer.valueOf(dataOut.getYValue().toString());
+            _seriesIn.getData().add(new XYChart.Data(size0 + i,yIn)); 
+            _seriesOut.getData().add(new XYChart.Data(size0 + i, yOut));
+        }
+        log("Size of Series : " + _seriesIn.getData().size());
     }
     
     private void readFile(File f) {  
@@ -62,30 +91,28 @@ public class ERDStatistic {
         try {
             FileReader inFile = new FileReader(f);                  
             BufferedReader inStream = new BufferedReader(inFile);
-            long sumValueIn  = 0;
-            long sumValueOut = 0;
+            //long sumValueIn  = 0;
+            //long sumValueOut = 0;
             boolean bBreak   = false;
             while ((inString = inStream.readLine()) != null) { // Read data until line with unix time is passed
                 if (bStart) {
                     String[] s = inString.split(",");
                     if (s.length > 3) {
-                        i++;
                         String[] s0  = s[3].split("\\.");
                         String[] s1  = s[4].split("\\.");
                         String day = s[1].substring(1) + s[2].substring(0,11);
-                        int valueIn  = Integer.parseInt(s0[0]);
-                        int valueOut = Integer.parseInt(s1[0]);
-                        sumValueIn   = sumValueIn  + valueIn; 
-                        sumValueOut  = sumValueOut + valueOut;
-                        iSum         = iSum + i;    
-                        sumValueIn   = sumValueIn / 1000 / 1000; // MBits/s
-                        sumValueOut = sumValueOut / 1000 / 1000; // MBits/s
-                        _seriesIn.getData().add(new XYChart.Data(iSum, sumValueIn)); // Average
-                        _seriesOut.getData().add(new XYChart.Data(iSum, sumValueOut)); // Average
+                        int valueIn  = Integer.parseInt(s0[0]) / 1000 / 1000; // MBits/s
+                        int valueOut = Integer.parseInt(s1[0]) / 1000 / 1000; // MBits/s;
+                        iSum++; 
+                        _seriesIn.getData().add(new XYChart.Data(iSum, valueIn)); // Average
+                        _seriesOut.getData().add(new XYChart.Data(iSum, valueOut)); // Average
+                        if (_day.isEmpty()) {
+                            _day = day.substring(0, day.length()-6);
+                        }
                     } 
                 } // First empty line after data defines end of statistic section
-                if (inString.length() == 0) {
-                    log(i + " Lines in data file  " + f.getName());
+                if (bStart && inString.length() == 0) {
+                    log(i + " Lines available for date " + _day);
                     bBreak = true;
                 } else {
                     if (inString.startsWith("[Line chart: Traffic Volume by Avg % Util (In)")) { 
@@ -106,7 +133,7 @@ public class ERDStatistic {
     }
     
     private void log(String s) {
-       
+       _LOGGER.log(s);
     }
 
     
