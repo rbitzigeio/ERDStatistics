@@ -24,15 +24,15 @@ public class Model {
     
     private static final String             _PROPERTIES = ".ERD.properties";
     private static final String             _CSVDIR     = "CSVDIR";
-    private static final String[]           _MONTH    = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-                                                         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-    
+    private static final String[]           _MONTH      = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                                                           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    private List                            _lCsv       = new ArrayList();
+    private HashMap<String, File>           _mCsv       = new HashMap<>(); // List of CSV files
+    private static HashMap<String,String>   _mCSVDirs   = new HashMap<>(); // List of ERD Consumers
     private String                          _propertiesFile;
     private String                          _csvDir;
+    private String                          _name;
     private File                            _selectedFile; 
-    private List                            _lCsv = new ArrayList();
-    private HashMap<String, File>           _mCsv = new HashMap<>(); // List of CSV files
-    private static HashMap<String,String>   _mCSVDirs     = new HashMap<>(); // List of ERD Consumers
     
     
     public Model() throws IOException {
@@ -41,6 +41,14 @@ public class Model {
     
     public Model(String dir) throws IOException {
         _csvDir = dir;
+    }
+    
+    public void setName(String name) {
+       _name = name;    
+    }
+    
+    public String getName() {
+       return _name;    
     }
     
     public void setSelectedFile(File selectedFile) {

@@ -42,7 +42,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.ContextMenuEvent;
@@ -71,6 +70,7 @@ public class Controller implements Initializable {
     @FXML private TextArea   taLogger;
     @FXML private Label      lBandWidth;
     @FXML private Label      lDate;
+    @FXML private Label      lModel;
     
     private int              _frequence = 1;
     private int              _unit = 0; // Default unit Bits/s, 1 = %
@@ -145,7 +145,7 @@ public class Controller implements Initializable {
             seriesLRIn.setName("LR In-Bound");
             seriesLROut.setName("LR Out-Bound");
             linRegLineChart.getData().addAll(seriesLRIn, seriesLROut);
-            String lrTitle = linRegLineChart.getTitle() + " LR)";
+            String lrTitle = linRegLineChart.getTitle() + " LR";
             linRegLineChart.setTitle(lrTitle);
         }
     }
@@ -158,6 +158,7 @@ public class Controller implements Initializable {
         loadProjectTree();
         loadModelMenues();
         bLinearReg.setDisable(true);
+        lModel.setText(_model.getName());
     }
     //--------------------------------------------------------------------------------------
     // Methode wird nach Änderung des Verzeichnisses mit Statistikdaten mehrmals aufgerufen.
@@ -174,6 +175,7 @@ public class Controller implements Initializable {
 
             String fileName = selectedYYYYItem.getValue() + "." + selectedMMItem.getValue() + "." + selectedDDItem.getValue();
             File f = _model.getCsvDataFiles(fileName); 
+            lModel.setText(_model.getName());
             if (f != null) {
                 tfLog.setText(f.getName());
                 log("Selected file : " + f.getName());
@@ -448,13 +450,18 @@ public class Controller implements Initializable {
     //
     private void loadModelMenues() {
         HashMap<String, String> hm = _model.getCsvDirs();
+        String firstModel = "";
         for (String key : hm.keySet()) {
             String v = hm.get(key);
+            if (firstModel.length()==0) {
+                firstModel = v;
+            }
             MenuItem mi = new MenuItem(v);
             log("Model inserted " + v);
             mData.getItems().add(mi);
             mi.addEventHandler(EventType.ROOT, (Event event) -> {
                 MenuItem mii = (MenuItem)event.getSource();
+                _model.setName(mii.getText());
                 _model.setCsvDir(mii.getText());
                 log("Model changed to " + mii.getText());
                 bpCenterChart.getChildren().clear();
@@ -462,6 +469,7 @@ public class Controller implements Initializable {
                 loadProjectTree();
             });
         }
+        lModel.setText(firstModel);
     }
     //-----------------------------------------
     // Load tree for selected platform/project
@@ -551,6 +559,7 @@ public class Controller implements Initializable {
         });
         datePeriod.getItems().addAll(startItem, stopItem);
         String dir = _model.getCsvDir();
+        lModel.setText(_model.getName());
         tfLog.setText(dir);
         log("Selected dir : " + dir);
         List<String> alFiles = _model.getSortedERDDataFiles();
