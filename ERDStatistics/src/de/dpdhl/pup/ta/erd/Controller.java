@@ -100,13 +100,14 @@ public class Controller implements Initializable {
     // Exit application and close windows
     //
     @FXML private void handleExitAction(ActionEvent event) {
-        log("Exit");
+        log("Controller: handleExitAction");
         System.exit(0);
     }
     //-------------------
     // Linear Regression
     //
     @FXML private void handleLinRegAction(ActionEvent event) {
+        log("Controller: handleLinRegAction");
         if (linRegLineChart != null) {
             log("Calculate linear regression for chart : " + linRegLineChart.getTitle());
             final NumberAxis                 xAxisLr        = new NumberAxis();   
@@ -154,7 +155,7 @@ public class Controller implements Initializable {
     //
     public void loadData() {
         tfLog.setText("Load data");
-        log("Load Data");
+        log("Controller: loadData");
         loadProjectTree();
         loadModelMenues();
         bLinearReg.setDisable(true);
@@ -165,6 +166,7 @@ public class Controller implements Initializable {
     // Grund unbekannt!!!
     //
     private void updateChart() {
+        log("Controller: updateChart");
         if (_selectedItem != null) {
             bLinearReg.setDisable(false);
             lDate.setText("");
@@ -268,6 +270,7 @@ public class Controller implements Initializable {
     // Create chart for in bound and out bound data
     //
     private Series[] createChart(File f) {
+        log("Controller: createChart");
         Series  seriesIn  = new Series();
         Series  seriesOut = new Series();
         Series[] series = {seriesIn, seriesOut};
@@ -291,24 +294,32 @@ public class Controller implements Initializable {
                         String[] s0  = s[3].split("\\.");
                         String[] s1  = s[4].split("\\.");
                         String day = s[1].substring(1) + s[2].substring(0,11);
-                        int valueIn  = Integer.parseInt(s0[0]);
-                        int valueOut = Integer.parseInt(s1[0]);
+                        // Read Double because value may raise limit of Interger
+                        Double dValueIn;
+                        Double dValueOut;
+                        long valueIn;
+                        long valueOut;
+                        try {
+                            dValueIn = Double.parseDouble(s0[0])  / 1000 / 1000; // MBits/s;
+                            valueIn  =  dValueIn.intValue();
+                        } catch (NumberFormatException ex) {
+                            log("Max value set for line " + i + " in data file  " + f.getName());
+                            valueIn = Integer.MAX_VALUE / 1000 / 1000; // MBits/s;
+                        }
+                        try {
+                            //valueOut = Integer.valueOf(s1[0])  / 1000 / 1000; // MBits/s;
+                            dValueOut = Double.parseDouble(s1[0])  / 1000 / 1000; // MBits/s;
+                            valueOut  =  dValueOut.intValue();
+                        } catch (NumberFormatException ex) {
+                            log("Max value set for line " + i + " in data file  " + f.getName());
+                            valueOut = Integer.MAX_VALUE / 1000 / 1000; // MBits/s;
+                        }
                         sumValueIn   = sumValueIn  + valueIn; 
                         sumValueOut  = sumValueOut + valueOut;
                         iSum         = iSum + i;
                         if (i % _frequence == 0) {
-                            if (_unit == 0) {                              
-                                sumValueIn  = sumValueIn / 1000 / 1000; // MBits/s
-                                //valueIn     = valueIn / 1000 / 1000; // MBits/s
-                                sumValueOut = sumValueOut / 1000 / 1000; // MBits/s
-                                //valueOut    = valueOut / 1000 / 1000; // MBits/s
-                            }
                             seriesIn.getData().add(new XYChart.Data(iSum/_frequence, sumValueIn/_frequence)); // Average
-                            //seriesIn.getData().add(new XYChart.Data(day, sumValueIn/_frequence)); // Average
-                            //seriesIn.getData().add(new XYChart.Data(i, valueIn));
                             seriesOut.getData().add(new XYChart.Data(iSum/_frequence, sumValueOut/_frequence)); // Average
-                            //seriesOut.getData().add(new XYChart.Data(day, sumValueOut/_frequence)); // Average
-                            //seriesOut.getData().add(new XYChart.Data(i, valueOut));
                             sumValueIn  = 0;
                             sumValueOut = 0;
                             iSum        = 0;
@@ -327,11 +338,11 @@ public class Controller implements Initializable {
                     }
                 }
                 if (bBreak) {
-                    break; // WHILE
+                    break; // WHILE -> Stopp reading datafile
                 }
             } 
         } catch (Exception ex) {  
-            log("Line : " + i + inString);
+            log("Line : " + i + " " + inString);
             log("Error reading file: " + ex.getMessage()) ;
         } 
         return series;    
@@ -339,10 +350,11 @@ public class Controller implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        log("Controller Initialize");
+        log("Controller: initialize");
     }       
 
     private String setTVItem(String s, String lasts, TreeItem<String> item, TreeItem<String> parentItem) {
+        log("Controller: setTVItem");
         if (!s.equals(lasts)) {
             item.setValue(s);
             parentItem.getChildren().add(item);
@@ -354,6 +366,7 @@ public class Controller implements Initializable {
     // Action to change value of frequence
     //
     @FXML private void handleFrequenceAction(ActionEvent event) {
+        log("Controller: handleFrequenceAction");
         ComboBox cb = (ComboBox)event.getSource();
         String frequence = cb.getSelectionModel().getSelectedItem().toString();
         String[] f = frequence.split("min");
@@ -367,11 +380,13 @@ public class Controller implements Initializable {
     // Data is used to define position of child windows
     //
     public void setWindow(double x, double y) {
+        log("Controller: setWindow");
         _WindowX = x;
         _WindowY = y;
     }
 
     public void setParentWindow(Stage stage) {
+        log("Controller: setParentWindow");
         _parentWindow = stage;
     }
     //----------------------------------------------------------------------------
@@ -382,6 +397,7 @@ public class Controller implements Initializable {
                                      LineChart<Number, Number> actLineChart, 
                                      LineChart<Number, Number> diffLineChart, 
                                      LineChart<Number, Number> _lastLineChart) {
+        log("Controller: calculateLineCharts");
         Series seriesActIn   = new Series();
         Series seriesActOut  = new Series();
         Series seriesDiffIn  = new Series();
@@ -449,6 +465,7 @@ public class Controller implements Initializable {
     // Load menue of project into menu
     //
     private void loadModelMenues() {
+        log("Controller: loadModelMenues");
         HashMap<String, String> hm = _model.getCsvDirs();
         String firstModel = "";
         for (String key : hm.keySet()) {
@@ -469,12 +486,14 @@ public class Controller implements Initializable {
                 loadProjectTree();
             });
         }
+        _model.setName(firstModel);
         lModel.setText(firstModel);
     }
     //-----------------------------------------
     // Load tree for selected platform/project
     //
     private void loadProjectTree() {
+        log("Controller: loadProjectTree");
         _lastLineChart = null;
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         Date date = new Date();
@@ -626,6 +645,7 @@ public class Controller implements Initializable {
     }
     //
     private void clear() {
+        log("Controller: clear");
         if (_lastStage != null) {
             _lastStage.close();
             _lastStage = null;

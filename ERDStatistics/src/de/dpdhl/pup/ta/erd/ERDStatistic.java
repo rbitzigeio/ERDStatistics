@@ -101,8 +101,24 @@ public class ERDStatistic {
                         String[] s0  = s[3].split("\\.");
                         String[] s1  = s[4].split("\\.");
                         String day = s[1].substring(1) + s[2].substring(0,11);
-                        int valueIn  = Integer.parseInt(s0[0]) / 1000 / 1000; // MBits/s
-                        int valueOut = Integer.parseInt(s1[0]) / 1000 / 1000; // MBits/s;
+                        Double dValueIn;
+                        Double dValueOut;
+                        long valueIn;
+                        long valueOut;
+                        try {
+                            dValueIn = Double.parseDouble(s0[0])  / 1000 / 1000; // MBits/s;
+                            valueIn  = dValueIn.intValue();
+                        } catch (NumberFormatException ex) {
+                            log("Max value set for line " + i + " in data file  " + f.getName());
+                            valueIn = Integer.MAX_VALUE / 1000 / 1000; // MBits/s;
+                        }
+                        try {
+                            dValueOut = Double.parseDouble(s1[0])  / 1000 / 1000; // MBits/s;
+                            valueOut  = dValueOut.intValue();
+                        } catch (NumberFormatException ex) {
+                            log("Max value set for line " + i + " in data file  " + f.getName());
+                            valueOut = Integer.MAX_VALUE / 1000 / 1000; // MBits/s;
+                        }
                         iSum++; 
                         _seriesIn.getData().add(new XYChart.Data(iSum, valueIn)); // Average
                         _seriesOut.getData().add(new XYChart.Data(iSum, valueOut)); // Average

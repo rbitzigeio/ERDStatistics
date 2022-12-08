@@ -22,6 +22,8 @@ import java.util.HashMap;
  */
 public class Model {
     
+    private static Logger                   _LOGGER;
+    
     private static final String             _PROPERTIES = ".ERD.properties";
     private static final String             _CSVDIR     = "CSVDIR";
     private static final String[]           _MONTH      = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
@@ -37,13 +39,16 @@ public class Model {
     
     public Model() throws IOException {
         this.init();
+        log("Model: Constructor");
     }
     
     public Model(String dir) throws IOException {
+        this();
         _csvDir = dir;
     }
     
     public void setName(String name) {
+        log("Model: setName");
        _name = name;    
     }
     
@@ -222,5 +227,12 @@ public class Model {
             case "Dec" : mmm = Month.DECEMBER;  break;
         }
         return mmm;
+    }
+    
+    private void log(String s) {
+        if (_LOGGER == null) {
+            _LOGGER = Logger.getInstance();
+        }       
+        _LOGGER.log(s);
     }
 }
