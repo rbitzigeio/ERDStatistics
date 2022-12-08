@@ -44,7 +44,7 @@
             </left>
 
             <center>
-                <TabPane prefHeight="505.0" prefWidth="1000.0" style="-fx-background-color: lightgrey;" tabClosingPolicy="UNAVAILABLE">
+                <TabPane fx:id="tpRoot" prefHeight="505.0" prefWidth="1000.0" style="-fx-background-color: lightgrey;" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                         <Tab text="Statistics">
                            <content>
@@ -66,6 +66,20 @@
                                    </children>
                                </VBox>
                            </content>    
+                        </Tab>
+                        <Tab text="Filter">
+                            <content>
+                                <ScrollPane minHeight="0.0" minWidth="0.0" prefHeight="680.0" prefWidth="1020.0">
+                                    
+                                </ScrollPane>
+                            </content>
+                        </Tab>
+                        <Tab text="Diffs">
+                            <content>
+                                <ScrollPane minHeight="0.0" minWidth="0.0" prefHeight="680.0" prefWidth="1020.0">
+                                    
+                                </ScrollPane>
+                            </content>
                         </Tab>
                         <Tab text="Logs">
                             <content>

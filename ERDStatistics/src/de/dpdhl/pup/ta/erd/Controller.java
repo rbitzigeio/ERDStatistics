@@ -40,6 +40,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
@@ -71,6 +73,7 @@ public class Controller implements Initializable {
     @FXML private Label      lBandWidth;
     @FXML private Label      lDate;
     @FXML private Label      lModel;
+    @FXML private TabPane    tpRoot;
     
     private int              _frequence = 1;
     private int              _unit = 0; // Default unit Bits/s, 1 = %
@@ -297,8 +300,9 @@ public class Controller implements Initializable {
                         // Read Double because value may raise limit of Interger
                         Double dValueIn;
                         Double dValueOut;
-                        long valueIn;
-                        long valueOut;
+                        long valueIn  = parseBandwith(i, _unit, s0[0]);
+                        long valueOut = parseBandwith(i, _unit, s1[0]);
+                        /*
                         try {
                             dValueIn = Double.parseDouble(s0[0])  / 1000 / 1000; // MBits/s;
                             valueIn  =  dValueIn.intValue();
@@ -314,6 +318,7 @@ public class Controller implements Initializable {
                             log("Max value set for line " + i + " in data file  " + f.getName());
                             valueOut = Integer.MAX_VALUE / 1000 / 1000; // MBits/s;
                         }
+                        */
                         sumValueIn   = sumValueIn  + valueIn; 
                         sumValueOut  = sumValueOut + valueOut;
                         iSum         = iSum + i;
@@ -533,46 +538,12 @@ public class Controller implements Initializable {
                     String startDate = startItem.getText();
                     startItem.setText("Set Startdate");
                     log("End date : " + endDate + " selected");
-                    log("Calculate period");
-                    File fStart = _model.getCsvDataFiles(startDate);
-                    File fEnd   = _model.getCsvDataFiles(endDate);
-                    log("Startfile : " + fStart.getName());
-                    log("Endfile : " + fEnd.getName());
-                    ArrayList<File> alFiles = _model.getFilesBetween(startDate, endDate);
-                    ERDStatistic erdTotal = null;
-                    for (File f : alFiles) {
-                        log("Found : " + f.getName());
-                        if (erdTotal == null) {
-                            erdTotal = new ERDStatistic(f);
-                        } else {
-                            ERDStatistic erd = new ERDStatistic(f);
-                            erdTotal.add(erd);
-                        }
+                    Tab tab = (Tab) tpRoot.getSelectionModel().getSelectedItem();
+                    log("Selected tab : " + tab.getText());
+                    System.out.println(tab.getText());
+                    if (tab.getText().toString().equals("Statistics")) {
+                        concatBandwidth(startDate, endDate);
                     }
-                    Series sIn  = erdTotal.getSeriesIn();
-                    Series sOut = erdTotal.getSeriesOut();
-                    log("Total size for period : " + sIn.getData().size());
-                   
-                    final NumberAxis                 xAxis         = new NumberAxis();   
-                    final NumberAxis                 yAxis         = new NumberAxis();   
-                    final LineChart<Number,Number>   lineChart     = new LineChart<>(xAxis,yAxis); 
-                    lineChart.getData().clear();
-                    lineChart.getData().addAll(sIn, sOut);
-                    lineChart.setTitle(startDate + " - " + endDate);
-                    setLayoutLineChart(lineChart, lineChart.getTitle(), false, bpCenterChart.getWidth(), bpCenterChart.getHeight(), 0.0, 0.0);
-                    // Check Unit fron data file  
-                    String sUnit;
-                    if (_unit == 0) {
-                        sUnit = " (in MBit/s)"; 
-                    } else {
-                        sUnit = " (in %)"; 
-                    }
-                    // Decribe Chart: Date and Unit                  
-                    bpCenterChart.getChildren().clear();
-                    bpCenterChart.getChildren().add(lineChart);
-                    lineChartsActions(lineChart, xAxis, yAxis);
-                    _selectedLineChart = lineChart;
-                    linRegLineChart    = lineChart;
                 }
             }
         });
@@ -610,8 +581,13 @@ public class Controller implements Initializable {
         tvStatistic.getSelectionModel().selectedItemProperty().addListener( new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                _selectedItem = (TreeItem)newValue;
-                updateChart();
+                Tab tab = (Tab) tpRoot.getSelectionModel().getSelectedItem();
+                log("Selected tab : " + tab.getText());
+                System.out.println(tab.getText());
+                if (tab.getText().equals("Statistics"))  {
+                    _selectedItem = (TreeItem)newValue;
+                    updateChart();
+                }
             }        
         });
         // TreeView - listen to key event
@@ -697,5 +673,65 @@ public class Controller implements Initializable {
                 lBandWidth.setText(iy);
             }
         });
+    }
+
+    private long parseBandwith(int iLine, int unit, String s) {
+        Double dValue;
+        long   value;
+        if (unit == 0) {
+            try {
+                dValue = Double.parseDouble(s)  / 1000 / 1000; // MBits/s;
+                value  =  dValue.intValue();
+            } catch (NumberFormatException ex) {
+                log("Max value set for line " + iLine);
+                value = Integer.MAX_VALUE / 1000 / 1000; // MBits/s;
+            }
+        } else {
+            value = Integer.parseInt(s);
+        }
+        return value;
+    }
+    
+    private void concatBandwidth(String startDate, String endDate) {
+        log("Calculate period");
+        File fStart = _model.getCsvDataFiles(startDate);
+        File fEnd   = _model.getCsvDataFiles(endDate);
+        log("Startfile : " + fStart.getName());
+        log("Endfile : " + fEnd.getName());
+        ArrayList<File> alFiles = _model.getFilesBetween(startDate, endDate);
+        ERDStatistic erdTotal = null;
+        for (File f : alFiles) {
+            log("Found : " + f.getName());
+            if (erdTotal == null) {
+                            erdTotal = new ERDStatistic(f);
+            } else {
+                ERDStatistic erd = new ERDStatistic(f);
+                erdTotal.add(erd);
+            }
+        }
+        Series sIn  = erdTotal.getSeriesIn();
+        Series sOut = erdTotal.getSeriesOut();
+        log("Total size for period : " + sIn.getData().size());
+                   
+        final NumberAxis                 xAxis         = new NumberAxis();   
+        final NumberAxis                 yAxis         = new NumberAxis();   
+        final LineChart<Number,Number>   lineChart     = new LineChart<>(xAxis,yAxis); 
+        lineChart.getData().clear();
+        lineChart.getData().addAll(sIn, sOut);
+        lineChart.setTitle(startDate + " - " + endDate);
+        setLayoutLineChart(lineChart, lineChart.getTitle(), false, bpCenterChart.getWidth(), bpCenterChart.getHeight(), 0.0, 0.0);
+        // Check Unit fron data file  
+        String sUnit;
+        if (_unit == 0) {
+            sUnit = " (in MBit/s)"; 
+        } else {
+            sUnit = " (in %)"; 
+        }
+        // Decribe Chart: Date and Unit                  
+        bpCenterChart.getChildren().clear();
+        bpCenterChart.getChildren().add(lineChart);
+        lineChartsActions(lineChart, xAxis, yAxis);
+        _selectedLineChart = lineChart;
+        linRegLineChart    = lineChart;
     }
 }
