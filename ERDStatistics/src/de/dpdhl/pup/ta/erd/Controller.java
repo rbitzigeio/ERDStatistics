@@ -69,6 +69,7 @@ public class Controller implements Initializable {
     @FXML private ComboBox   cbFrequence;
     @FXML private Menu       mData;
     @FXML private Button     bLinearReg;
+    @FXML private Button     bMaxPerHour;
     @FXML private TextArea   taLogger;
     @FXML private Label      lBandWidth;
     @FXML private Label      lDate;
@@ -113,28 +114,17 @@ public class Controller implements Initializable {
         log("Controller: handleLinRegAction");
         if (linRegLineChart != null) {
             log("Calculate linear regression for chart : " + linRegLineChart.getTitle());
-            final NumberAxis                 xAxisLr        = new NumberAxis();   
-            final NumberAxis                 yAxisLr        = new NumberAxis();   
-            final LineChart<Number,Number>   lineChartLr    = new LineChart<>(xAxisLr,yAxisLr); // LineChart in main window
-            ObservableList<Series<Number, Number>> olLineChart = linRegLineChart.getData();
-            Series seriesIn  = olLineChart.get(0);
-            Series seriesOut = olLineChart.get(1);
-            ObservableList olSeriesIn  = seriesIn.getData();
-            ObservableList olSeriesOut = seriesOut.getData();
-            // Define array of data points and fill arrays from line chart in loop
-            double[] aXin  = new double[olSeriesIn.size()];
-            double[] aYin  = new double[olSeriesIn.size()];
-            double[] aXout = new double[olSeriesIn.size()];
-            double[] aYout = new double[olSeriesIn.size()];
-            int size = olSeriesIn.size();
-            for (int i=0; i<size; i++) {
-                Data data = (Data)olSeriesIn.get(i);
-                aXin[i] = (double)Integer.valueOf(data.getXValue().toString());
-                aYin[i] = (double)Integer.valueOf(data.getYValue().toString());
-                data = (Data)olSeriesOut.get(i);
-                aXout[i] = (double)Integer.valueOf(data.getXValue().toString());
-                aYout[i] = (double)Integer.valueOf(data.getYValue().toString());
-            }
+            final NumberAxis                       xAxisLr     = new NumberAxis();   
+            final NumberAxis                       yAxisLr     = new NumberAxis();   
+            final LineChart<Number,Number>         lineChartLr = new LineChart<>(xAxisLr,yAxisLr); // LineChart in main window
+            
+            int seriesSize =linRegLineChart.getData().get(0).getData().size();
+            double[] aXin  = new double[seriesSize];
+            double[] aYin  = new double[seriesSize];
+            double[] aXout = new double[seriesSize];
+            double[] aYout = new double[seriesSize]; // [olSeriesIn.size()];
+            //( Get data of Chart
+            getDataOfSeries(linRegLineChart, aXin, aYin, aXout, aYout);
             // Calculate linear regression 
             LinearRegression lrIn  = new LinearRegression(aXin, aYin);
             LinearRegression lrOut = new LinearRegression(aXout, aYout);
@@ -143,14 +133,69 @@ public class Controller implements Initializable {
             // Only first and last point neccessary for definition of line
             // Y = intercept + x * slope // y = y(0) + x * Steigung
             seriesLRIn.getData().add(new XYChart.Data(0,lrIn.intercept())); 
-            seriesLRIn.getData().add(new XYChart.Data(size*_frequence,lrIn.intercept() + size*_frequence*lrIn.slope()));    
+            seriesLRIn.getData().add(new XYChart.Data(seriesSize * _frequence,lrIn.intercept() + seriesSize * _frequence*lrIn.slope()));    
             seriesLROut.getData().add(new XYChart.Data(0, lrOut.intercept()));
-            seriesLROut.getData().add(new XYChart.Data(size*_frequence, lrOut.intercept() + size*_frequence*lrOut.slope()));
+            seriesLROut.getData().add(new XYChart.Data(seriesSize * _frequence, lrOut.intercept() + seriesSize * _frequence*lrOut.slope()));
             seriesLRIn.setName("LR In-Bound");
             seriesLROut.setName("LR Out-Bound");
             linRegLineChart.getData().addAll(seriesLRIn, seriesLROut);
             String lrTitle = linRegLineChart.getTitle() + " LR";
             linRegLineChart.setTitle(lrTitle);
+            bLinearReg.setDisable(true);
+        }
+    }
+    //------------------------------------
+    // Exit application and close windows
+    //
+    @FXML private void handleMaxPerHourAction(ActionEvent event) {
+        log("Controller: handleMaxPerHourAction");
+         if (linRegLineChart != null) {
+            log("Calculate linear regression for chart : " + linRegLineChart.getTitle());
+            final NumberAxis                       xAxisLr     = new NumberAxis();   
+            final NumberAxis                       yAxisLr     = new NumberAxis();   
+            final LineChart<Number,Number>         lineChartLr = new LineChart<>(xAxisLr,yAxisLr); // LineChart in main window
+            
+            int seriesSize =linRegLineChart.getData().get(0).getData().size();
+            double[] aXin  = new double[seriesSize];
+            double[] aYin  = new double[seriesSize];
+            double[] aXout = new double[seriesSize];
+            double[] aYout = new double[seriesSize]; // [olSeriesIn.size()];
+            //( Get data of Chart
+            getDataOfSeries(linRegLineChart, aXin, aYin, aXout, aYout);
+            getMaxPerHourDataOfSeries(aXin, aYin, aXout, aYout);
+            
+            Series seriesLRIn  = new Series();
+            Series seriesLROut = new Series();
+            // Calculate max values per hour
+            int startX;
+            int endX;
+            int maxInY  = 0;
+            int maxOutY = 0;
+            for (int i=0; i<seriesSize; i++) {
+                if (aYin[i] > maxInY) {
+                    maxInY = (int)aYin[i];
+                }
+                if (aYout[i] > maxOutY) {
+                    maxOutY = (int)aYout[i];
+                }
+                if (i > 0 && i % 60 == 0) {
+                    startX = i - 60;
+                    endX   = i;
+                    seriesLRIn.getData().add(new XYChart.Data(startX,maxInY)); 
+                    seriesLRIn.getData().add(new XYChart.Data(endX,maxInY)); 
+                    seriesLROut.getData().add(new XYChart.Data(startX,maxOutY)); 
+                    seriesLROut.getData().add(new XYChart.Data(endX,maxOutY));
+                    maxInY  = 0;
+                    maxOutY = 0;
+                } 
+            }
+            // max value per hour
+            seriesLRIn.setName("Max In-Bound");
+            seriesLROut.setName("Max Out-Bound");
+            linRegLineChart.getData().addAll(seriesLRIn, seriesLROut);
+            String lrTitle = linRegLineChart.getTitle() + " Max/h";
+            linRegLineChart.setTitle(lrTitle);
+            bMaxPerHour.setDisable(true);
         }
     }
     //-------------------
@@ -162,6 +207,7 @@ public class Controller implements Initializable {
         loadProjectTree();
         loadModelMenues();
         bLinearReg.setDisable(true);
+        bMaxPerHour.setDisable(true);
         lModel.setText(_model.getName());
     }
     //--------------------------------------------------------------------------------------
@@ -172,6 +218,7 @@ public class Controller implements Initializable {
         log("Controller: updateChart");
         if (_selectedItem != null) {
             bLinearReg.setDisable(false);
+            bMaxPerHour.setDisable(false);
             lDate.setText("");
             lBandWidth.setText("");
             TreeItem<String> selectedDDItem   = (TreeItem<String>) _selectedItem;
@@ -632,6 +679,7 @@ public class Controller implements Initializable {
         _alStages.clear();
         _bUpdateLastLineChart = false;
         bLinearReg.setDisable(true);
+        bMaxPerHour.setDisable(true);
         lDate.setText("");
         lBandWidth.setText("");
     }
@@ -733,5 +781,27 @@ public class Controller implements Initializable {
         lineChartsActions(lineChart, xAxis, yAxis);
         _selectedLineChart = lineChart;
         linRegLineChart    = lineChart;
+    }
+
+    private void getDataOfSeries(LineChart<Number, Number> linRegLineChart, double[] aXin, double[] aYin, double[] aXout, double[] aYout) {
+        ObservableList<Series<Number, Number>> olLineChart = linRegLineChart.getData();
+        Series seriesIn  = olLineChart.get(0);
+        Series seriesOut = olLineChart.get(1);
+        ObservableList olSeriesIn  = seriesIn.getData();
+        ObservableList olSeriesOut = seriesOut.getData();
+        // Define array of data points and fill arrays from line chart in loop
+        int size = olSeriesIn.size();
+        for (int i=0; i<size; i++) {
+            Data data = (Data)olSeriesIn.get(i);
+            aXin[i] = (double)Integer.valueOf(data.getXValue().toString());
+            aYin[i] = (double)Integer.valueOf(data.getYValue().toString());
+            data = (Data)olSeriesOut.get(i);
+            aXout[i] = (double)Integer.valueOf(data.getXValue().toString());
+            aYout[i] = (double)Integer.valueOf(data.getYValue().toString());
+        }
+    }   
+
+    private void getMaxPerHourDataOfSeries(double[] aXin, double[] aYin, double[] aXout, double[] aYout) {
+        
     }
 }

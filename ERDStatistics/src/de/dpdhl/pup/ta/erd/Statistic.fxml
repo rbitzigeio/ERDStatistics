@@ -52,14 +52,14 @@
                                    <children>
                                        <Pane fx:id="bpCenterSelection" prefHeight="43.0" prefWidth="1000.0" style="-fx-background-color: darkgrey;" BorderPane.alignment="CENTER">
                                            <children>
-                                               <Label layoutX="14.0"  layoutY="15.0" text="Model" />
-                                               <Label layoutX="60.0"  fx:id="lModel" layoutY="15.0" text="1234567890" />
+                                               <Label layoutX="14.0" layoutY="15.0" text="Model" />
+                                               <Label fx:id="lModel" layoutX="60.0" layoutY="15.0" text="1234567890" />
                                                <Label layoutX="214.0" layoutY="15.0" text="Frequenz" />
                                                <ComboBox fx:id="cbFrequence" layoutX="280.0" layoutY="10.0" onAction="#handleFrequenceAction" prefHeight="15.0" prefWidth="150.0" />
                                                <Label layoutX="450.0" layoutY="15.0" text="Bandwidth:" />
-                                               <Label layoutX="520.0" fx:id="lBandWidth" layoutY="15.0" text="" />
+                                               <Label fx:id="lBandWidth" layoutX="520.0" layoutY="15.0" text="" />
                                                <Label layoutX="600.0" layoutY="15.0" text="Datum:" />
-                                               <Label layoutX="650.0" fx:id="lDate" layoutY="15.0" text="" />
+                                               <Label fx:id="lDate" layoutX="650.0" layoutY="15.0" text="" />
                                            </children>
                                        </Pane>
                                        <Pane fx:id="bpCenterChart" prefHeight="435.0" prefWidth="1000.0" />                          
@@ -84,7 +84,9 @@
                         <Tab text="Logs">
                             <content>
                                 <ScrollPane minHeight="0.0" minWidth="0.0" prefHeight="680.0" prefWidth="1020.0">
-                                    <TextArea fx:id="taLogger" prefHeight="680.0" prefWidth="1020.0" />
+                                   <content>
+                                       <TextArea fx:id="taLogger" prefHeight="680.0" prefWidth="1020.0" />
+                                   </content>
                                 </ScrollPane>
                             </content>
                         </Tab>
@@ -95,9 +97,10 @@
             <bottom>
                 <Pane layoutY="550.0" prefHeight="50.0" prefWidth="1200.0" styleClass="Pane" stylesheets="@Stylesheet.css">
                     <children>
-                        <Button layoutX="1106.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleExitAction" prefHeight="30.0" prefWidth="80.0" text="Exit" />
+                        <Button layoutX="1140.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleExitAction" prefHeight="30.0" prefWidth="50.0" text="Exit" />
                         <TextField fx:id="tfLog" layoutX="10.0" layoutY="10.0" prefHeight="30.0" prefWidth="998.0" />
-                        <Button fx:id="bLinearReg" layoutX="1015.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleLinRegAction" prefHeight="30.0" prefWidth="80.0" text="LR" />
+                        <Button fx:id="bLinearReg" layoutX="1020.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleLinRegAction" prefHeight="30.0" prefWidth="50.0" text="LR" />
+                        <Button fx:id="bMaxPerHour" layoutX="1080.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleMaxPerHourAction" prefHeight="30.0" prefWidth="50.0" text="max/h" />
                     </children>
                 </Pane>
             </bottom>
