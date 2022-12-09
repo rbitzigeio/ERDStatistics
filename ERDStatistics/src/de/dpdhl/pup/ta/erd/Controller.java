@@ -83,14 +83,12 @@ public class Controller implements Initializable {
     private boolean          _bUpdateLastLineChart = false;   
     private File             _lastFile;    
     private Model            _model; 
+    private boolean          bUpdateLastLineChart = false;
+    private File             lastFile;
     
-    LineChart<Number,Number> lastLineChart;
-    LineChart<Number,Number> linRegLineChart;
-    boolean                  bUpdateLastLineChart = false;
-    Stage                    lastStage;
-    File                     lastFile;
-    ArrayList<Stage>         alStages = new ArrayList<>();
-
+    private LineChart<Number,Number>    lastLineChart;
+    private LineChart<Number,Number>    linRegLineChart;
+    private Stage                       lastStage;
     private Stage                       _parentWindow;
     private Stage                       _lastStage;
     private ArrayList<Stage>            _alStages = new ArrayList<>();
@@ -102,23 +100,17 @@ public class Controller implements Initializable {
 
     //------------------------------------
     // Exit application and close windows
-    //
     @FXML private void handleExitAction(ActionEvent event) {
         log("Controller: handleExitAction");
         System.exit(0);
     }
     //-------------------
     // Linear Regression
-    //
     @FXML private void handleLinRegAction(ActionEvent event) {
         log("Controller: handleLinRegAction");
         if (linRegLineChart != null) {
             log("Calculate linear regression for chart : " + linRegLineChart.getTitle());
-            final NumberAxis                       xAxisLr     = new NumberAxis();   
-            final NumberAxis                       yAxisLr     = new NumberAxis();   
-            final LineChart<Number,Number>         lineChartLr = new LineChart<>(xAxisLr,yAxisLr); // LineChart in main window
-            
-            int seriesSize =linRegLineChart.getData().get(0).getData().size();
+            int seriesSize = linRegLineChart.getData().get(0).getData().size();
             double[] aXin  = new double[seriesSize];
             double[] aYin  = new double[seriesSize];
             double[] aXout = new double[seriesSize];
@@ -144,17 +136,12 @@ public class Controller implements Initializable {
             bLinearReg.setDisable(true);
         }
     }
-    //------------------------------------
-    // Exit application and close windows
-    //
+    //--------------------------------------------
+    // Create chart for maximal bandwith per hour
     @FXML private void handleMaxPerHourAction(ActionEvent event) {
         log("Controller: handleMaxPerHourAction");
          if (linRegLineChart != null) {
             log("Calculate linear regression for chart : " + linRegLineChart.getTitle());
-            final NumberAxis                       xAxisLr     = new NumberAxis();   
-            final NumberAxis                       yAxisLr     = new NumberAxis();   
-            final LineChart<Number,Number>         lineChartLr = new LineChart<>(xAxisLr,yAxisLr); // LineChart in main window
-            
             int seriesSize =linRegLineChart.getData().get(0).getData().size();
             double[] aXin  = new double[seriesSize];
             double[] aYin  = new double[seriesSize];
@@ -163,7 +150,7 @@ public class Controller implements Initializable {
             //( Get data of Chart
             getDataOfSeries(linRegLineChart, aXin, aYin, aXout, aYout);
             getMaxPerHourDataOfSeries(aXin, aYin, aXout, aYout);
-            
+            // Build series in and out bound for chart
             Series seriesLRIn  = new Series();
             Series seriesLROut = new Series();
             // Calculate max values per hour
@@ -189,6 +176,7 @@ public class Controller implements Initializable {
                     maxOutY = 0;
                 }
             }
+            // Insert last points of series into chart
             seriesLRIn.getData().add(new XYChart.Data(seriesSize-60,maxInY)); 
             seriesLRIn.getData().add(new XYChart.Data(seriesSize,maxInY)); 
             seriesLROut.getData().add(new XYChart.Data(seriesSize-60,maxOutY)); 
@@ -204,7 +192,6 @@ public class Controller implements Initializable {
     }
     //-------------------
     // Load initial data
-    //
     public void loadData() {
         tfLog.setText("Load data");
         log("Controller: loadData");
@@ -217,7 +204,6 @@ public class Controller implements Initializable {
     //--------------------------------------------------------------------------------------
     // Methode wird nach Änderung des Verzeichnisses mit Statistikdaten mehrmals aufgerufen.
     // Grund unbekannt!!!
-    //
     private void updateChart() {
         log("Controller: updateChart");
         if (_selectedItem != null) {
@@ -322,7 +308,6 @@ public class Controller implements Initializable {
     }
     //----------------------------------------------
     // Create chart for in bound and out bound data
-    //
     private Series[] createChart(File f) {
         log("Controller: createChart");
         Series  seriesIn  = new Series();
@@ -420,7 +405,6 @@ public class Controller implements Initializable {
     }
     //-------------------------------------
     // Action to change value of frequence
-    //
     @FXML private void handleFrequenceAction(ActionEvent event) {
         log("Controller: handleFrequenceAction");
         ComboBox cb = (ComboBox)event.getSource();
@@ -434,13 +418,13 @@ public class Controller implements Initializable {
     //--------------------------------------------------
     // Set window coordinates of main window
     // Data is used to define position of child windows
-    //
     public void setWindow(double x, double y) {
         log("Controller: setWindow");
         _WindowX = x;
         _WindowY = y;
     }
-
+    //----------------------------------------
+    // Stage of parent window defined in main
     public void setParentWindow(Stage stage) {
         log("Controller: setParentWindow");
         _parentWindow = stage;
@@ -448,7 +432,6 @@ public class Controller implements Initializable {
     //----------------------------------------------------------------------------
     // Data of actual line chart and last line chart is used to compare this data
     // and visualize data and diff of data in seperated window
-    //
     private void calculateLineCharts(LineChart<Number, Number> lineChart, 
                                      LineChart<Number, Number> actLineChart, 
                                      LineChart<Number, Number> diffLineChart, 
@@ -474,7 +457,7 @@ public class Controller implements Initializable {
         Series seriesLastOut = olLastLineChart.get(1);
         ObservableList olLastSeriesIn  = seriesLastIn.getData();
         ObservableList olLastSeriesOut = seriesLastOut.getData();
-        
+        // Definition of lines/points in chart
         if (olSeriesIn.size() == olLastSeriesIn.size() && olSeriesOut.size() == olLastSeriesOut.size()) {
             for (int i=0; i<olSeriesIn.size(); i++) {
                 // actual data
@@ -509,7 +492,6 @@ public class Controller implements Initializable {
     }
     //---------------------------------
     // Definition of line chart layout 
-    //
     private void setLayoutLineChart(LineChart lc, String title, boolean b, double width, double height, double x, double y) {
         lc.setTitle(title);
         lc.setCreateSymbols(b);
@@ -519,7 +501,6 @@ public class Controller implements Initializable {
     }
     //---------------------------------
     // Load menue of project into menu
-    //
     private void loadModelMenues() {
         log("Controller: loadModelMenues");
         HashMap<String, String> hm = _model.getCsvDirs();
@@ -547,7 +528,6 @@ public class Controller implements Initializable {
     }
     //-----------------------------------------
     // Load tree for selected platform/project
-    //
     private void loadProjectTree() {
         log("Controller: loadProjectTree");
         _lastLineChart = null;
@@ -562,7 +542,7 @@ public class Controller implements Initializable {
                 _model = new Model();
             } 
         } catch (IOException ex) {
-            
+            log("Missing model");
         }
         ContextMenu datePeriod = new ContextMenu();
         MenuItem startItem = new MenuItem("set Startdate");
@@ -591,7 +571,6 @@ public class Controller implements Initializable {
                     log("End date : " + endDate + " selected");
                     Tab tab = (Tab) tpRoot.getSelectionModel().getSelectedItem();
                     log("Selected tab : " + tab.getText());
-                    System.out.println(tab.getText());
                     if (tab.getText().toString().equals("Statistics")) {
                         concatBandwidth(startDate, endDate);
                     }
@@ -634,7 +613,6 @@ public class Controller implements Initializable {
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                 Tab tab = (Tab) tpRoot.getSelectionModel().getSelectedItem();
                 log("Selected tab : " + tab.getText());
-                System.out.println(tab.getText());
                 if (tab.getText().equals("Statistics"))  {
                     _selectedItem = (TreeItem)newValue;
                     updateChart();
@@ -660,7 +638,6 @@ public class Controller implements Initializable {
             cbFrequence.getItems().addAll("1min", "2min", "5min", "15min", "30min", "60min");
             cbFrequence.getSelectionModel().selectFirst();
         }
-        
         tvStatistic.setContextMenu(datePeriod);
         tvStatistic.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>(){
             @Override
@@ -670,7 +647,8 @@ public class Controller implements Initializable {
             }            
         });
     }
-    //
+    //---------------------------------------------------------
+    // Reintialize neccessary variables to start new statistic
     private void clear() {
         log("Controller: clear");
         if (_lastStage != null) {
@@ -689,7 +667,6 @@ public class Controller implements Initializable {
     }
     //--------------------------------
     // Central logging of information
-    //
     private void log(String s) {
         if (_LOGGER == null) {
             _LOGGER = Logger.getInstance();
@@ -704,10 +681,9 @@ public class Controller implements Initializable {
         }
     }
 
-    /*
-    * Click in chart
-    * Result is value of x- and y-axis. Result is bandwidth and time
-    */
+    //----------------------------------------------------------------
+    // Click in chart
+    // Result is value of x- and y-axis. Result is bandwidth and time
     private void lineChartsActions(LineChart<Number, Number> lineChart, NumberAxis xAxis, NumberAxis yAxis) {
         lineChart.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
@@ -726,7 +702,8 @@ public class Controller implements Initializable {
             }
         });
     }
-
+    //---------------------------------------------------
+    // Parse bandwidth to long and reduce unit to MBit/s
     private long parseBandwith(int iLine, int unit, String s) {
         Double dValue;
         long   value;
@@ -743,7 +720,8 @@ public class Controller implements Initializable {
         }
         return value;
     }
-    
+    //-------------------------------------------------
+    // Concatenate different dates to one single chart
     private void concatBandwidth(String startDate, String endDate) {
         log("Calculate period");
         File fStart = _model.getCsvDataFiles(startDate);
@@ -764,7 +742,7 @@ public class Controller implements Initializable {
         Series sIn  = erdTotal.getSeriesIn();
         Series sOut = erdTotal.getSeriesOut();
         log("Total size for period : " + sIn.getData().size());
-                   
+        // Definition of line chart  
         final NumberAxis                 xAxis         = new NumberAxis();   
         final NumberAxis                 yAxis         = new NumberAxis();   
         final LineChart<Number,Number>   lineChart     = new LineChart<>(xAxis,yAxis); 
@@ -786,7 +764,8 @@ public class Controller implements Initializable {
         _selectedLineChart = lineChart;
         linRegLineChart    = lineChart;
     }
-
+    //----------------------------------
+    // Build array of points from chart
     private void getDataOfSeries(LineChart<Number, Number> linRegLineChart, double[] aXin, double[] aYin, double[] aXout, double[] aYout) {
         ObservableList<Series<Number, Number>> olLineChart = linRegLineChart.getData();
         Series seriesIn  = olLineChart.get(0);

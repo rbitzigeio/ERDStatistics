@@ -46,6 +46,7 @@ public class Logger {
             sb.append(ex.getMessage());
         }
         sb.append("\n");
+        // Last Log in first line
         if (_ta != null) {
             String s = _ta.getText();
             _ta.clear();
