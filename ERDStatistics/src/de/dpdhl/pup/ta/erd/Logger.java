@@ -47,7 +47,11 @@ public class Logger {
         }
         sb.append("\n");
         if (_ta != null) {
+            String s = _ta.getText();
+            _ta.clear();
             _ta.appendText(sb.toString());
+            _ta.appendText(s);
+            _ta.positionCaret(0);
         } else {
             System.out.println("Missing initialization ");
         }

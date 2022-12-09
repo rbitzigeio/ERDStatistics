@@ -187,8 +187,12 @@ public class Controller implements Initializable {
                     seriesLROut.getData().add(new XYChart.Data(endX,maxOutY));
                     maxInY  = 0;
                     maxOutY = 0;
-                } 
+                }
             }
+            seriesLRIn.getData().add(new XYChart.Data(seriesSize-60,maxInY)); 
+            seriesLRIn.getData().add(new XYChart.Data(seriesSize,maxInY)); 
+            seriesLROut.getData().add(new XYChart.Data(seriesSize-60,maxOutY)); 
+            seriesLROut.getData().add(new XYChart.Data(seriesSize,maxOutY));
             // max value per hour
             seriesLRIn.setName("Max In-Bound");
             seriesLROut.setName("Max Out-Bound");
