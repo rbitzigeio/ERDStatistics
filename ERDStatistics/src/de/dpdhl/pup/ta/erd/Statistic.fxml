@@ -57,9 +57,11 @@
                                                <Label layoutX="214.0" layoutY="15.0" text="Frequenz" />
                                                <ComboBox fx:id="cbFrequence" layoutX="280.0" layoutY="10.0" onAction="#handleFrequenceAction" prefHeight="15.0" prefWidth="150.0" />
                                                <Label layoutX="450.0" layoutY="15.0" text="Bandwidth:" />
-                                               <Label fx:id="lBandWidth" layoutX="520.0" layoutY="15.0" text="" />
+                                               <Label fx:id="lBandWidth" layoutX="530.0" layoutY="15.0" text="" />
                                                <Label layoutX="600.0" layoutY="15.0" text="Datum:" />
                                                <Label fx:id="lDate" layoutX="650.0" layoutY="15.0" text="" />
+                                               <Label layoutX="750.0" layoutY="15.0" text="Total:" />
+                                               <Label fx:id="lTotal" layoutX="800.0" layoutY="15.0" text="" />
                                            </children>
                                        </Pane>
                                        <Pane fx:id="bpCenterChart" prefHeight="435.0" prefWidth="1000.0" />                          

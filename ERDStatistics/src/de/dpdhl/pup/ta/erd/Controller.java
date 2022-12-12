@@ -74,6 +74,7 @@ public class Controller implements Initializable {
     @FXML private Label      lBandWidth;
     @FXML private Label      lDate;
     @FXML private Label      lModel;
+    @FXML private Label      lTotal;
     @FXML private TabPane    tpRoot;
     
     private int              _frequence = 1;
@@ -124,6 +125,14 @@ public class Controller implements Initializable {
             Series seriesLROut = new Series();
             // Only first and last point neccessary for definition of line
             // Y = intercept + x * slope // y = y(0) + x * Steigung
+            // Total sum of Bandwidth
+            // Half of sum of 1st value and last value
+            // 6`*60*24 = seconds per day
+            // Divided by 8 = bytes
+            // Divided by 1000 * 1000 = TerraBytes 
+            double dInTotal  = (lrIn.intercept()  + lrIn.intercept()  + seriesSize * _frequence*lrIn.slope() ) / 2.0 * (60*60*24) / 8 / 1000 / 1000;
+            double dOutTotal = (lrOut.intercept() + lrOut.intercept() + seriesSize * _frequence*lrOut.slope()) / 2.0 * (60*60*24) / 8 / 1000 / 1000;
+            lTotal.setText(String.format( "%.3f", dInTotal )  + " / " + String.format( "%.3f", dOutTotal) + " TByte");
             seriesLRIn.getData().add(new XYChart.Data(0,lrIn.intercept())); 
             seriesLRIn.getData().add(new XYChart.Data(seriesSize * _frequence,lrIn.intercept() + seriesSize * _frequence*lrIn.slope()));    
             seriesLROut.getData().add(new XYChart.Data(0, lrOut.intercept()));
@@ -211,6 +220,7 @@ public class Controller implements Initializable {
             bMaxPerHour.setDisable(false);
             lDate.setText("");
             lBandWidth.setText("");
+            lTotal.setText("");
             TreeItem<String> selectedDDItem   = (TreeItem<String>) _selectedItem;
             TreeItem<String> selectedMMItem   = (TreeItem<String>) selectedDDItem.getParent();
             TreeItem<String> selectedYYYYItem = (TreeItem<String>) selectedMMItem.getParent();
@@ -664,7 +674,9 @@ public class Controller implements Initializable {
         bMaxPerHour.setDisable(true);
         lDate.setText("");
         lBandWidth.setText("");
+        lTotal.setText("");
     }
+    
     //--------------------------------
     // Central logging of information
     private void log(String s) {
