@@ -13,12 +13,14 @@ import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -320,9 +322,11 @@ public class Controller implements Initializable {
     // Create chart for in bound and out bound data
     private Series[] createChart(File f) {
         log("Controller: createChart");
-        Series  seriesIn  = new Series();
-        Series  seriesOut = new Series();
-        Series[] series = {seriesIn, seriesOut};
+        Series        seriesIn  = new Series();
+        Series        seriesOut = new Series();
+        Series[]      series    = {seriesIn, seriesOut};
+        List<XYChart.Data> colIn  = new ArrayList();
+        List<XYChart.Data> colOut = new ArrayList();
         String  inString  = "";
         boolean bStart    = false;
         int     i         = 0;
@@ -343,34 +347,17 @@ public class Controller implements Initializable {
                         String[] s0  = s[3].split("\\.");
                         String[] s1  = s[4].split("\\.");
                         String day = s[1].substring(1) + s[2].substring(0,11);
-                        // Read Double because value may raise limit of Interger
-                        Double dValueIn;
-                        Double dValueOut;
+                        // get formatted bandwidth
                         long valueIn  = parseBandwith(i, _unit, s0[0]);
                         long valueOut = parseBandwith(i, _unit, s1[0]);
-                        /*
-                        try {
-                            dValueIn = Double.parseDouble(s0[0])  / 1000 / 1000; // MBits/s;
-                            valueIn  =  dValueIn.intValue();
-                        } catch (NumberFormatException ex) {
-                            log("Max value set for line " + i + " in data file  " + f.getName());
-                            valueIn = Integer.MAX_VALUE / 1000 / 1000; // MBits/s;
-                        }
-                        try {
-                            //valueOut = Integer.valueOf(s1[0])  / 1000 / 1000; // MBits/s;
-                            dValueOut = Double.parseDouble(s1[0])  / 1000 / 1000; // MBits/s;
-                            valueOut  =  dValueOut.intValue();
-                        } catch (NumberFormatException ex) {
-                            log("Max value set for line " + i + " in data file  " + f.getName());
-                            valueOut = Integer.MAX_VALUE / 1000 / 1000; // MBits/s;
-                        }
-                        */
                         sumValueIn   = sumValueIn  + valueIn; 
                         sumValueOut  = sumValueOut + valueOut;
                         iSum         = iSum + i;
                         if (i % _frequence == 0) {
-                            seriesIn.getData().add(new XYChart.Data(iSum/_frequence, sumValueIn/_frequence)); // Average
-                            seriesOut.getData().add(new XYChart.Data(iSum/_frequence, sumValueOut/_frequence)); // Average
+                            XYChart.Data xyIn  = new XYChart.Data(iSum/_frequence, sumValueIn/_frequence);
+                            XYChart.Data xyOut = new XYChart.Data(iSum/_frequence, sumValueOut/_frequence);
+                            colIn.add(xyIn); // Average
+                            colOut.add(xyOut);
                             sumValueIn  = 0;
                             sumValueOut = 0;
                             iSum        = 0;
@@ -396,6 +383,10 @@ public class Controller implements Initializable {
             log("Line : " + i + " " + inString);
             log("Error reading file: " + ex.getMessage()) ;
         } 
+        ObservableList<XYChart.Data> olIn  = FXCollections.observableArrayList(colIn);
+        ObservableList<XYChart.Data> olOut = FXCollections.observableArrayList(colOut);
+        seriesIn.getData().addAll(olIn);
+        seriesOut.getData().addAll(olOut);
         return series;    
     }
     
