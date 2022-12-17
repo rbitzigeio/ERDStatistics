@@ -83,6 +83,15 @@
                                 </ScrollPane>
                             </content>
                         </Tab>
+                  <Tab text="Database">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <Button layoutX="23.0" layoutY="22.0" mnemonicParsing="false" onAction="#handleDatabaseAction" text="Connect" />
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </Tab>
                         <Tab text="Logs">
                             <content>
                                 <ScrollPane minHeight="0.0" minWidth="0.0" prefHeight="680.0" prefWidth="1020.0">

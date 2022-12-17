@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -199,6 +200,19 @@ public class Controller implements Initializable {
             String lrTitle = linRegLineChart.getTitle() + " Max/h";
             linRegLineChart.setTitle(lrTitle);
             bMaxPerHour.setDisable(true);
+        }
+    }
+    
+    //--------------------------------------------
+    // Create chart for maximal bandwith per hour
+    @FXML private void handleDatabaseAction(ActionEvent event) {
+        log("Try to establish Databsae Connection");
+        MysqlConnect mysqlConnect = new MysqlConnect();
+        Connection con = mysqlConnect.connect();
+        if (con != null) {
+            log("Connected to Mysql");
+        } else {
+            log("Connection failed");
         }
     }
     //-------------------
