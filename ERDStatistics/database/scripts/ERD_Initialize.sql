@@ -13,9 +13,16 @@ grant all on ERD.* to 'erd'@'localhost';
 # Tables
 create table if not exists ERD.Bandwidth 
 (
-UnixTime int NOT NULL unique,
-FormattedTime date NOT NULL,
-BitsPerSecIn double NOT NULL,
-BitsPerSecOut double NOT NULL
+UnixTime INT NOT NULL unique,
+FormattedTime TIMESTAMP NOT NULL,
+BitsPerSecIn DOUBLE NOT NULL,
+BitsPerSecOut DOUBLE NOT NULL
 );
-
+create table if not exists ERD.Report
+(
+Title VARCHAR(255) NOT NULL,
+Description VARCHAR(255) NOT NULL.
+ID INT NOT NULL UNIQUE,
+Section VARCHAR(80),
+LineChart VARCHAR(128)
+);

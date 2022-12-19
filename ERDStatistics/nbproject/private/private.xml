@@ -5,6 +5,7 @@
         <group>
             <file>file:/Users/rbo/Documents/GitHub/ERDStatistics/ERDStatistics/src/de/dpdhl/pup/ta/erd/Controller.java</file>
             <file>file:/Users/rbo/Documents/GitHub/ERDStatistics/ERDStatistics/src/de/dpdhl/pup/ta/erd/Model.java</file>
+            <file>file:/Users/rbo/Documents/GitHub/ERDStatistics/ERDStatistics/src/de/dpdhl/pup/ta/erd/ERDStatistic.java</file>
             <file>file:/Users/rbo/Documents/GitHub/ERDStatistics/ERDStatistics/src/de/dpdhl/pup/ta/erd/MysqlConnect.java</file>
         </group>
     </open-files>

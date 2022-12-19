@@ -4,18 +4,21 @@
  */
 package de.dpdhl.pup.ta.erd;
 
+import com.mysql.cj.jdbc.CallableStatement;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -211,6 +214,37 @@ public class Controller implements Initializable {
         Connection con = mysqlConnect.connect();
         if (con != null) {
             log("Connected to Mysql");
+            // 1669071600,"Nov 22, 2022 12:00:00 AM",294255500.136,360151181.464
+            int uTime = 1669071600;
+            double dIn = 294255500.136;
+            double dOut = 360151181.464;
+            DateFormat format = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+            try {
+                Date date = format.parse("Nov 22, 2022 12:00:00 AM");
+                System.out.println(date);
+                java.sql.Timestamp timestamp = new java.sql.Timestamp(date.getTime());
+                System.out.println(timestamp);
+                CallableStatement cs = (CallableStatement) con.prepareCall("{call insertBandwidth(?,?,?,?)}");
+                cs.setInt(1, uTime);
+                cs.setTimestamp(2, timestamp);
+                cs.setDouble(3, dIn);
+                cs.setDouble(4, dOut);
+                cs.execute();
+                date = format.parse("Nov 22, 2022 12:01:00 AM");
+                uTime = 1669071660;
+                System.out.println(date);
+                timestamp = new java.sql.Timestamp(date.getTime());
+                System.out.println(timestamp);
+                cs = (CallableStatement) con.prepareCall("{call insertBandwidth(?,?,?,?)}");
+                cs.setInt(1, uTime);
+                cs.setTimestamp(2, timestamp);
+                cs.setDouble(3, dIn);
+                cs.setDouble(4, dOut);
+                cs.execute();
+            } catch (SQLException | ParseException ex) {
+                System.out.println("Exception: " + ex.toString());
+            }
+            
         } else {
             log("Connection failed");
         }
@@ -382,10 +416,18 @@ public class Controller implements Initializable {
                         bBreak = true;
                     }
                 } else {
-                    if (inString.startsWith("[Line chart: Traffic Volume by Avg % Util (In)")) { 
+                    if (inString.startsWith("Title: ")) { 
+                        System.out.println(inString);
+                    } else if (inString.startsWith("Description: ")) { 
+                        System.out.println(inString);
+                    } else if (inString.startsWith("Report ID ")) { 
+                        System.out.println(inString);
+                    } else if (inString.startsWith("[Line chart: ")) { 
+                        System.out.println(inString);
+                    } else if (inString.startsWith("[Line chart: Traffic Volume by Avg % Util (In)")) { 
+                        System.out.println(inString);
                         _unit = 1; // % Unit or Bit/s (0 = default)
-                    }
-                    if (inString.startsWith("\"unix time\"")) {
+                    } else if (inString.startsWith("\"unix time\"")) {
                         bStart = true;
                     }
                 }
