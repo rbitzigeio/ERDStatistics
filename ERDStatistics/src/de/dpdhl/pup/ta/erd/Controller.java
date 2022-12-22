@@ -692,18 +692,14 @@ public class Controller implements Initializable {
             }        
         });
         // TreeView - listen to key event
+        // Use arrow keys to select new item in tree
         tvStatistic.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                System.out.println("Handle Key Event!");
                 TreeItem<String> selected = (TreeItem)tvStatistic.getSelectionModel().getSelectedItem();
-                if (selected != null && event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP ) {
-                    TreeItem tiOld = (TreeItem)tvStatistic.getSelectionModel().getSelectedItem();
-                    int i  = tvStatistic.getSelectionModel().getSelectedIndex();
-                    System.out.println("Item : " + i);
-                    System.out.println("Item : " + tiOld.getValue().toString());
-                    System.out.println("Key was pressed");
-                    if (event.getCode() == KeyCode.DOWN) {
+                if (selected != null && event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP
+                                     || event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT) {
+                    if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.RIGHT) {
                         tvStatistic.getSelectionModel().selectNext();    
                     } else {
                         tvStatistic.getSelectionModel().selectPrevious();
