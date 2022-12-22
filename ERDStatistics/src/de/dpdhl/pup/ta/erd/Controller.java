@@ -709,10 +709,13 @@ public class Controller implements Initializable {
                 }
             }
         });
+        // Insert items for Combobox with frequence
         if (cbFrequence.getItems().isEmpty()) {
             cbFrequence.getItems().addAll("1min", "2min", "5min", "15min", "30min", "60min");
             cbFrequence.getSelectionModel().selectFirst();
         }
+        // Context menu with start and end date for period selection
+        // position the menu at the position of selected item 
         tvStatistic.setContextMenu(datePeriod);
         tvStatistic.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>(){
             @Override
