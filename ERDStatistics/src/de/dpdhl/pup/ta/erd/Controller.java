@@ -54,6 +54,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -382,7 +383,8 @@ public class Controller implements Initializable {
         _unit = 0; // Default Unit 
         seriesIn.setName("In-Bound");
         seriesOut.setName("Out-Bound");
-        try (FileReader inFile = new FileReader(f);                  
+        Report report = new Report(f.getAbsolutePath());
+        try (FileReader inFile = new FileReader(f);       
             BufferedReader inStream = new BufferedReader(inFile)) {   
             long sumValueIn  = 0;
             long sumValueOut = 0;
@@ -417,18 +419,31 @@ public class Controller implements Initializable {
                     }
                 } else {
                     if (inString.startsWith("Title: ")) { 
-                        System.out.println(inString);
+                        String[] s = inString.split(":");
+                        report.setTitle(s[1].trim() + s[2].trim() + s[3].trim());
                     } else if (inString.startsWith("Description: ")) { 
-                        System.out.println(inString);
+                        String[] s = inString.split(":");
+                        report.setDescription(s[1].trim() + s[2].trim() + s[3]);
+                    } else if (inString.startsWith("[Section: ")) { 
+                        String[] s = inString.split(":");
+                        report.setSection(s[1].trim().replace("]", ""));
                     } else if (inString.startsWith("Report ID ")) { 
-                        System.out.println(inString);
+                        String[] s = inString.split(" ");
+                        report.setId(Integer.parseInt(s[2]));
                     } else if (inString.startsWith("[Line chart: ")) { 
-                        System.out.println(inString);
-                    } else if (inString.startsWith("[Line chart: Traffic Volume by Avg % Util (In)")) { 
-                        System.out.println(inString);
-                        _unit = 1; // % Unit or Bit/s (0 = default)
+                        String[] s = inString.split(":");
+                        report.setInfo(s[1].trim());
+                        if (inString.startsWith("[Line chart: Traffic Volume by Avg % Util (In)")) { 
+                            _unit = 1; // % Unit or Bit/s (0 = default)
+                        }
                     } else if (inString.startsWith("\"unix time\"")) {
                         bStart = true;
+                        log(report.getFileName());
+                        log(report.getId());
+                        log(report.getTitle());
+                        log(report.getDescription());
+                        log(report.getInfo());
+                        log(report.getSection());
                     }
                 }
                 if (bBreak) {
@@ -677,17 +692,24 @@ public class Controller implements Initializable {
             }        
         });
         // TreeView - listen to key event
-        tvStatistic.setOnKeyPressed(event->{
-            if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP ) {
-                TreeItem tiOld = (TreeItem)tvStatistic.getSelectionModel().getSelectedItem();
-                int i  = tvStatistic.getSelectionModel().getSelectedIndex();
-                System.out.println("Item : " + i);
-                System.out.println("Item : " + tiOld.getValue().toString());
-                System.out.println("Key was pressed");
-                if (event.getCode() == KeyCode.DOWN) {
-                    tvStatistic.getSelectionModel().selectNext();
-                } else {
-                    tvStatistic.getSelectionModel().selectPrevious();
+        tvStatistic.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                System.out.println("Handle Key Event!");
+                TreeItem<String> selected = (TreeItem)tvStatistic.getSelectionModel().getSelectedItem();
+                if (selected != null && event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP ) {
+                    TreeItem tiOld = (TreeItem)tvStatistic.getSelectionModel().getSelectedItem();
+                    int i  = tvStatistic.getSelectionModel().getSelectedIndex();
+                    System.out.println("Item : " + i);
+                    System.out.println("Item : " + tiOld.getValue().toString());
+                    System.out.println("Key was pressed");
+                    if (event.getCode() == KeyCode.DOWN) {
+                        tvStatistic.getSelectionModel().selectNext();    
+                    } else {
+                        tvStatistic.getSelectionModel().selectPrevious();
+                    }
+                    event.consume();
+                    _parentWindow.requestFocus();
                 }
             }
         });
@@ -738,6 +760,9 @@ public class Controller implements Initializable {
         } else {
             System.out.println("Missing initialize Logging.");
         }
+    }
+    private void log(int i) {
+        log(String.valueOf(i));
     }
 
     //----------------------------------------------------------------

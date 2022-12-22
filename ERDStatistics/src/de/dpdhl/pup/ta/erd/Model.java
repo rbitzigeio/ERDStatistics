@@ -34,7 +34,8 @@ public class Model {
     private String                          _propertiesFile;
     private String                          _csvDir;
     private String                          _name;
-    private File                            _selectedFile; 
+    private File                            _selectedFile;
+    private Report                          _report;
     
     
     public Model() throws IOException {
@@ -54,6 +55,14 @@ public class Model {
     
     public String getName() {
        return _name;    
+    }
+    
+    public void setReport(Report report) {
+       _report = report;    
+    }
+    
+    public Report getReport() {
+       return _report;    
     }
     
     public void setSelectedFile(File selectedFile) {
