@@ -1,5 +1,3 @@
 ERDStatistics/build/
 ERDStatistics/dist/
-ERDStatistics/nbproject/private/
-/*/*/nbproject/private/
-/*/nbproject/private/
+ERDStatistics/nbproject/private/private.properties
