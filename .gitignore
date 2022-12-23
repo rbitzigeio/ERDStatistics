@@ -1,3 +1,4 @@
 ERDStatistics/build/
 ERDStatistics/dist/
-**/nbproject/private
+/*/*/nbproject/private/
+/*/nbproject/private/
