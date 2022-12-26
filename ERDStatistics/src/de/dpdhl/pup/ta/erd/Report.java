@@ -4,18 +4,25 @@
  */
 package de.dpdhl.pup.ta.erd;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+
 /**
  *
  * @author cyqjefe0019
  */
 public class Report {
     
-    private int    _id;
-    private String _title;
-    private String _description;
-    private String _info;
-    private String _fileName;
-    private String _section;
+    private int       _id;
+    private String    _title;
+    private String    _description;
+    private String    _info;
+    private String    _fileName;
+    private String    _section;
+    private String    _date;
+    
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern( "dd.MM.yyyy" );
     
     public Report() {  
     }
@@ -69,6 +76,10 @@ public class Report {
      */
     public void setTitle(String title) {
         this._title = title;
+        int pos = title.indexOf('(');
+        String s[] = (title.substring(pos+1, title.length()-3)).split(" ");
+        String datum = s[0] + " " + s[1] + " " + s[2];
+        this.setDate(datum);
     }
 
      /**
@@ -125,6 +136,35 @@ public class Report {
      */
     public void setFileName(String fileName) {
         this._fileName = fileName;
+    }
+
+    /**
+     * @return the _date
+     */
+    public String getDate() {
+        return _date;
+    }
+    public LocalDate getLocalDate() {
+        String s[]   = _date.split(".");
+        int    year  = Integer.parseInt(s[2]); 
+        int    month = Integer.parseInt(s[1]); 
+        int    day   = Integer.parseInt(s[0]);
+        return LocalDate.of(year, month, day);
+    }
+
+    /**
+     * @param _date the _date to set
+     */
+    public void setDate(LocalDate ld) {
+        this._date = formatter.format( ld );
+    }
+    public void setDate(String sDate) {
+        String s[]   = sDate.split(" ");
+        int year     = Integer.parseInt(s[2]); 
+        int month    = Utility.getMonthAsInt(s[0]);
+        int day      = Integer.parseInt(s[1].replace(",", "").trim());
+        LocalDate ld = LocalDate.of(year, month, day);
+        this._date   = formatter.format( ld );
     }
     
 }

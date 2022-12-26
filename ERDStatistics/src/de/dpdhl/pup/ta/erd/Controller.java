@@ -384,6 +384,10 @@ public class Controller implements Initializable {
         seriesIn.setName("In-Bound");
         seriesOut.setName("Out-Bound");
         Report report = new Report(f.getAbsolutePath());
+        if (_model != null) {
+            _model.setReport(report);
+            log("report created");
+        }
         try (FileReader inFile = new FileReader(f);       
             BufferedReader inStream = new BufferedReader(inFile)) {   
             long sumValueIn  = 0;
@@ -396,13 +400,13 @@ public class Controller implements Initializable {
                         i++;
                         String[] s0  = s[3].split("\\.");
                         String[] s1  = s[4].split("\\.");
-                        String day = s[1].substring(1) + s[2].substring(0,11);
+                        String   day = s[1].substring(1) + s[2].substring(0,11);
                         // get formatted bandwidth
                         long valueIn  = parseBandwith(i, _unit, s0[0]);
                         long valueOut = parseBandwith(i, _unit, s1[0]);
-                        sumValueIn   = sumValueIn  + valueIn; 
-                        sumValueOut  = sumValueOut + valueOut;
-                        iSum         = iSum + i;
+                        sumValueIn    = sumValueIn  + valueIn; 
+                        sumValueOut   = sumValueOut + valueOut;
+                        iSum          = iSum + i;
                         if (i % _frequence == 0) {
                             XYChart.Data xyIn  = new XYChart.Data(iSum/_frequence, sumValueIn/_frequence);
                             XYChart.Data xyOut = new XYChart.Data(iSum/_frequence, sumValueOut/_frequence);
