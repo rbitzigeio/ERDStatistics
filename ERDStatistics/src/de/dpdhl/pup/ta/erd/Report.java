@@ -145,10 +145,10 @@ public class Report {
         return _date;
     }
     public LocalDate getLocalDate() {
-        String s[]   = _date.split(".");
-        int    year  = Integer.parseInt(s[2]); 
-        int    month = Integer.parseInt(s[1]); 
-        int    day   = Integer.parseInt(s[0]);
+        String[] s     = _date.split("\\.");
+        int      year  = Integer.parseInt(s[2]); 
+        int      month = Integer.parseInt(s[1]); 
+        int      day   = Integer.parseInt(s[0]);
         return LocalDate.of(year, month, day);
     }
 

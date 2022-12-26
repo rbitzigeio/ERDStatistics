@@ -16,11 +16,15 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -305,7 +309,12 @@ public class Controller implements Initializable {
                     sUnit = " (in %)"; 
                 }
                 // Decribe Chart: Date and Unit
-                lineChart.setTitle("Bandwidth : " + selectedDDItem.getValue() + "." + selectedMMItem.getValue() + "." + selectedYYYYItem.getValue() + sUnit);
+                Report report = _model.getReport();
+                
+                String s = report.getDate();
+                LocalDate ld = report.getLocalDate();
+                DayOfWeek dow = ld.getDayOfWeek();
+                lineChart.setTitle("Bandwidth : " + dow.getDisplayName(TextStyle.SHORT, Locale.GERMAN) + " " + report.getDate() + sUnit);
                 bpCenterChart.getChildren().clear();
                 bpCenterChart.getChildren().add(lineChart);
                 lineChartsActions(lineChart, xAxis, yAxis);
