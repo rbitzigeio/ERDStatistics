@@ -1,5 +1,7 @@
 # Script to create Database schema, user and tables to share 
 # statistics of ExpressRouteDirect
+# root user 
+# K...! || O...5
 # 18.12.2022
 # RBo
 #------------------------------------------------------------ 

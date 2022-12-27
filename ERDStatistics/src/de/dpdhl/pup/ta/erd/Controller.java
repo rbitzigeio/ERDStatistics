@@ -314,7 +314,7 @@ public class Controller implements Initializable {
                 String s = report.getDate();
                 LocalDate ld = report.getLocalDate();
                 DayOfWeek dow = ld.getDayOfWeek();
-                lineChart.setTitle("Bandwidth : " + dow.getDisplayName(TextStyle.SHORT, Locale.GERMAN) + " " + report.getDate() + sUnit);
+                lineChart.setTitle("Bandwidth : " + dow.getDisplayName(TextStyle.SHORT, Locale.GERMAN) + "., " + report.getDate() + sUnit);
                 bpCenterChart.getChildren().clear();
                 bpCenterChart.getChildren().add(lineChart);
                 lineChartsActions(lineChart, xAxis, yAxis);
