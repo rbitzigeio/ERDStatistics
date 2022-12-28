@@ -392,7 +392,7 @@ public class Controller implements Initializable {
         _unit = 0; // Default Unit 
         seriesIn.setName("In-Bound");
         seriesOut.setName("Out-Bound");
-        Report report = new Report(f.getAbsolutePath());
+        Report report = new Report(f.getName());
         if (_model != null) {
             _model.setReport(report);
             log("report created");
@@ -452,6 +452,7 @@ public class Controller implements Initializable {
                     } else if (inString.startsWith("\"unix time\"")) {
                         bStart = true;
                         log(report.getFileName());
+                        log(report.getDate());
                         log(report.getId());
                         log(report.getTitle());
                         log(report.getDescription());

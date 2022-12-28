@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="ERDStatistics" default="init" basedir=".">
+
+    <description>Initialize  project ERDStatistics.</description>
+
+    <target name="init" description="Copy properties to $HOME dir">
+        <echo message="Copy properties to $HOME dir"/>
+    </target>
+
+</project>
