@@ -4,8 +4,13 @@
 
     <description>Initialize  project ERDStatistics.</description>
 
+    <property environment="env"/>
+
     <target name="init" description="Copy properties to $HOME dir">
         <echo message="Copy properties to $HOME dir"/>
+        <copy file=".ERD.properties" 
+              todir="${env.HOME}/"
+              overwrite="true"/>
     </target>
 
 </project>
