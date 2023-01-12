@@ -5,11 +5,27 @@
     <description>Initialize  project ERDStatistics.</description>
 
     <property environment="env"/>
-
-    <target name="init" description="Copy properties to $HOME dir">
+	
+	<condition property="isUnix">
+	    <os family="UNIX"/>
+	</condition>
+	
+	<condition property="isWindows"> 
+	    <os family="WINDOWS"/>
+	</condition>
+	
+    <target name="setUnix" if="isUnix">
+	    <property name="HOME" value="${env.HOME}"/>
+	</target>
+	
+	<target name="setWindows" if="isWindows">
+		<property name="HOME" value="${env.USERPROFILE}"/>
+	</target>
+	
+    <target name="init" description="Copy properties to $HOME dir" depends="setWindows, setUnix">
         <echo message="Copy properties to $HOME dir"/>
         <copy file=".ERD.properties" 
-              todir="${env.HOME}/"
+              todir="${HOME}"
               overwrite="true"/>
     </target>
 
