@@ -18,7 +18,8 @@ create table if not exists ERD.Bandwidth
 UnixTime INT NOT NULL unique,
 FormattedTime TIMESTAMP NOT NULL,
 BitsPerSecIn DOUBLE NOT NULL,
-BitsPerSecOut DOUBLE NOT NULL
+BitsPerSecOut DOUBLE NOT NULL,
+ReportID INT
 );
 create table if not exists ERD.Report
 (
@@ -26,5 +27,7 @@ Title VARCHAR(255) NOT NULL,
 Description VARCHAR(255) NOT NULL.
 ID INT NOT NULL UNIQUE,
 Section VARCHAR(80),
-LineChart VARCHAR(128)
+LineChart VARCHAR(128),
+FileName VARCHAR(128),
+ITSystem VARCHAR(32)
 );

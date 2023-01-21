@@ -77,21 +77,33 @@ public class SQLCommunication {
         }
     }
     
-    public static void insertEntity(int uTime, String sDate, double dIn, double dOut) {
+    public static void insertEntity(int uTime, String sDate, double dIn, double dOut, int reportId) throws Exception{
         SQLCommunication com = new SQLCommunication();
         com.getConnection();
         DateFormat format = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
-        try {
-            Date date = format.parse(sDate);
-            java.sql.Timestamp timestamp = new java.sql.Timestamp(date.getTime());
-            CallableStatement cs = (CallableStatement) connection.prepareCall("{call insertBandwidth(?,?,?,?)}");
-            cs.setInt(1, uTime);
-            cs.setTimestamp(2, timestamp);
-            cs.setDouble(3, dIn);
-            cs.setDouble(4, dOut);
-            cs.execute();
-        } catch (SQLException | ParseException ex) {
-            System.out.println("Exception: " + ex.toString());
-        }
+        Date date = format.parse(sDate);
+        java.sql.Timestamp timestamp = new java.sql.Timestamp(date.getTime());
+        CallableStatement cs = (CallableStatement) connection.prepareCall("{call insertBandwidth(?,?,?,?,?)}");
+        cs.setInt(1, uTime);
+        cs.setTimestamp(2, timestamp);
+        cs.setDouble(3, dIn);
+        cs.setDouble(4, dOut);
+        cs.setInt(5, reportId);
+        cs.execute();
+    }
+    
+    
+ public static void insertReport(String title, String description, int id, String section, String lineChart, String fileName, String icto) throws SQLException  {
+        SQLCommunication com = new SQLCommunication();
+        com.getConnection();
+        CallableStatement cs = (CallableStatement) connection.prepareCall("{call insertReport(?,?,?,?,?,?, ?)}");
+        cs.setString(1, title);
+        cs.setString(2, description);
+        cs.setInt(3, id);
+        cs.setString(4, section);
+        cs.setString(5, lineChart);
+        cs.setString(6, fileName);
+        cs.setString(7, icto);
+        cs.execute();
     }
 }

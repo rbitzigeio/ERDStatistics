@@ -419,7 +419,8 @@ public class Controller implements Initializable {
                         SQLCommunication.insertEntity(Integer.parseInt(s[0]), 
                                                       (s[1] + ", " + s[2]).replaceAll("\"", ""), 
                                                       Double.parseDouble(s[3]), 
-                                                      Double.parseDouble(s[4])); 
+                                                      Double.parseDouble(s[4]),
+                                                      report.getId()); 
                         if (i % _frequence == 0) {
                             XYChart.Data xyIn  = new XYChart.Data(iSum/_frequence, sumValueIn/_frequence);
                             XYChart.Data xyOut = new XYChart.Data(iSum/_frequence, sumValueOut/_frequence);
@@ -455,6 +456,10 @@ public class Controller implements Initializable {
                         }
                     } else if (inString.startsWith("\"unix time\"")) {
                         bStart = true;
+                        SQLCommunication.insertReport(report.getTitle(), report.getDescription(), 
+                                                      report.getId(), report.getSection(), 
+                                                      report.getInfo(),report.getFileName(),
+                                                      _model.getName());
                         log(report.getFileName());
                         log(report.getDate());
                         log(report.getId());
