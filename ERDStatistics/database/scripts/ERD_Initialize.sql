@@ -24,7 +24,7 @@ ReportID INT
 create table if not exists ERD.Report
 (
 Title VARCHAR(255) NOT NULL,
-Description VARCHAR(255) NOT NULL.
+Description VARCHAR(255) NOT NULL,
 ID INT NOT NULL UNIQUE,
 Section VARCHAR(80),
 LineChart VARCHAR(128),
