@@ -23,7 +23,7 @@
 	</target>
 	
     <target name="init" description="Copy properties to $HOME dir" depends="setWindows, setUnix">
-        <echo message="Copy properties to $HOME dir"/>
+        <echo message="Copy properties to ${HOME} dir"/>
         <copy file=".ERD.properties" 
               todir="${HOME}"
               overwrite="true"/>

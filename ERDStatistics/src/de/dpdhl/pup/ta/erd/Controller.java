@@ -421,6 +421,7 @@ public class Controller implements Initializable {
                                                       Double.parseDouble(s[3]), 
                                                       Double.parseDouble(s[4]),
                                                       report.getId()); 
+                        log ("SQL Connection established : " + SQLCommunication.isConnected());
                         if (i % _frequence == 0) {
                             XYChart.Data xyIn  = new XYChart.Data(iSum/_frequence, sumValueIn/_frequence);
                             XYChart.Data xyOut = new XYChart.Data(iSum/_frequence, sumValueOut/_frequence);
@@ -460,6 +461,7 @@ public class Controller implements Initializable {
                                                       report.getId(), report.getSection(), 
                                                       report.getInfo(),report.getFileName(),
                                                       _model.getName());
+                        log ("SQL Connection established : " + SQLCommunication.isConnected());
                         log(report.getFileName());
                         log(report.getDate());
                         log(report.getId());
