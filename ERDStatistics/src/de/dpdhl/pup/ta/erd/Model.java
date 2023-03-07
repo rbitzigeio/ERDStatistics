@@ -43,9 +43,10 @@ public class Model {
         log("Model: Constructor");
     }
     
-    public Model(String dir) throws IOException {
+    public Model(File file) throws IOException {
         this();
-        _csvDir = dir;
+        _csvDir = file.getAbsolutePath();
+        _name   = file.getName();
     }
     
     public void setName(String name) {
