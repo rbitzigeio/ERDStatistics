@@ -144,6 +144,7 @@ public class Report {
     public String getDate() {
         return _date;
     }
+    
     public LocalDate getLocalDate() {
         String[] s     = _date.split("\\.");
         int      year  = Integer.parseInt(s[2]); 

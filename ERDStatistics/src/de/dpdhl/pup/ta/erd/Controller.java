@@ -458,7 +458,7 @@ public class Controller implements Initializable {
                     } else if (inString.startsWith("\"unix time\"")) {
                         bStart = true;
                         SQLCommunication.insertReport(report.getTitle(), report.getDescription(), 
-                                                      report.getId(), report.getSection(), 
+                                                      report.getId(), report.getLocalDate() ,report.getSection(), 
                                                       report.getInfo(),report.getFileName(),
                                                       _model.getName());
                         log ("SQL Connection established : " + SQLCommunication.isConnected());

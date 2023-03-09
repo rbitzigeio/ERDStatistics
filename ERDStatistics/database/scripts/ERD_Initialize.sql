@@ -1,7 +1,7 @@
 # Script to create Database schema, user and tables to share 
 # statistics of ExpressRouteDirect
 # root user 
-# K...! || O...5
+# K...! || O...5 || H..B..7
 # 18.12.2022
 # RBo
 #------------------------------------------------------------ 
@@ -15,19 +15,24 @@ grant all on ERD.* to 'erd'@'localhost';
 # Tables
 create table if not exists ERD.Bandwidth 
 (
-UnixTime INT NOT NULL unique,
+UnixTime INT NOT NULL,
 FormattedTime TIMESTAMP NOT NULL,
 BitsPerSecIn DOUBLE NOT NULL,
 BitsPerSecOut DOUBLE NOT NULL,
 ReportID INT
 );
+ALTER TABLE ERD.Bandwidth ADD UNIQUE (UnixTime, ReportID);
+#
 create table if not exists ERD.Report
 (
 Title VARCHAR(255) NOT NULL,
 Description VARCHAR(255) NOT NULL,
-ID INT NOT NULL UNIQUE,
+ID INT NOT NULL,
+CreationDate Date NOT NULL,
 Section VARCHAR(80),
 LineChart VARCHAR(255),
 FileName VARCHAR(128),
 ITSystem VARCHAR(32)
 );
+ALTER TABLE ERD.Report ADD UNIQUE (ID, CreationDate); 
+

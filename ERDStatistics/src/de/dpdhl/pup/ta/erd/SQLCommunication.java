@@ -10,9 +10,11 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Properties;
 
@@ -84,7 +86,7 @@ public class SQLCommunication {
             DateFormat format = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
             Date date = format.parse(sDate);
             java.sql.Timestamp timestamp = new java.sql.Timestamp(date.getTime());
-            CallableStatement cs = (CallableStatement) connection.prepareCall("{call insertBandwidth(?,?,?,?,?)}");
+            CallableStatement cs = (CallableStatement) con.prepareCall("{call insertBandwidth(?,?,?,?,?)}");
             cs.setInt(1, uTime);
             cs.setTimestamp(2, timestamp);
             cs.setDouble(3, dIn);
@@ -95,20 +97,41 @@ public class SQLCommunication {
     }
     
     
-    public static void insertReport(String title, String description, int id, String section, String lineChart, String fileName, String icto) throws SQLException  {
+    public static boolean insertReport(String title, String description, int id, LocalDate date, String section, String lineChart, String fileName, String icto) throws SQLException  {
         SQLCommunication com = new SQLCommunication();
         Connection con = com.getConnection();
+        boolean isInserted = false;
         if (con != null) {
-            CallableStatement cs = (CallableStatement) connection.prepareCall("{call insertReport(?,?,?,?,?,?, ?)}");
-            cs.setString(1, title);
-            cs.setString(2, description);
-            cs.setInt(3, id);
-            cs.setString(4, section);
-            cs.setString(5, lineChart);
-            cs.setString(6, fileName);
-            cs.setString(7, icto);
-            cs.execute();
+            if (!checkReport(id)) {
+                java.sql.Date sqlDate = java.sql.Date.valueOf(date);
+                CallableStatement cs = (CallableStatement) con.prepareCall("{call insertReport(?,?,?,?,?,?,?,?)}");
+                cs.setString(1, title);
+                cs.setString(2, description);
+                cs.setInt(3, id);
+                cs.setDate(4, sqlDate);
+                cs.setString(5, section);
+                cs.setString(6, lineChart);
+                cs.setString(7, fileName);
+                cs.setString(8, icto);
+                cs.execute();
+                isInserted = true;
+            } 
         }
+        return isInserted;
+    }
+    
+    public static boolean checkReport(int id) throws SQLException  {
+        SQLCommunication com = new SQLCommunication();
+        Connection con = com.getConnection();
+        boolean idExists = false;
+        if (con != null) {
+            CallableStatement cs = (CallableStatement) con.prepareCall("{? = call checkReport(?)}");
+            cs.setInt(2, id);
+            cs.registerOutParameter(1, Types.BOOLEAN);
+            cs.execute();
+            idExists = cs.getBoolean(1);
+        }
+        return idExists;
     }
     
     public static boolean isConnected() {
