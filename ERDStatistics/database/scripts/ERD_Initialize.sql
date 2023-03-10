@@ -19,9 +19,10 @@ UnixTime INT NOT NULL,
 FormattedTime TIMESTAMP NOT NULL,
 BitsPerSecIn DOUBLE NOT NULL,
 BitsPerSecOut DOUBLE NOT NULL,
-ReportID INT
+ReportID INT,
+ITSystem INT
 );
-ALTER TABLE ERD.Bandwidth ADD UNIQUE (UnixTime, ReportID);
+ALTER TABLE ERD.Bandwidth ADD UNIQUE (UnixTime, ReportID, ITSystem);
 #
 create table if not exists ERD.Report
 (
@@ -32,7 +33,13 @@ CreationDate Date NOT NULL,
 Section VARCHAR(80),
 LineChart VARCHAR(255),
 FileName VARCHAR(128),
-ITSystem VARCHAR(32)
+ITSystem INT
 );
-ALTER TABLE ERD.Report ADD UNIQUE (ID, CreationDate); 
+ALTER TABLE ERD.Report ADD UNIQUE (ID, CreationDate, ITSystem); 
+#
+CREATE TABLE if not exists ERD.ITSystem
+(
+NAME VARCHAR(32) NOT NULL,
+ID INT NOT NULL Primary Key
+)
 

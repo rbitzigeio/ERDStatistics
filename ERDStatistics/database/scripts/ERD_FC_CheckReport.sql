@@ -1,11 +1,12 @@
-CREATE DEFINER=`root`@`localhost` FUNCTION `checkReport`(pID int) RETURNS tinyint(1)
+DELIMETER //
+CREATE DEFINER=`root`@`localhost` FUNCTION `checkReport`(pID int) RETURNS boolean
     DETERMINISTIC
 BEGIN
    DECLARE iValue int;
    SELECT count(*) into iValue from erd.report where ID = pID;
-   if (iValue > 0) then
+   IF (iValue > 0) then 
       return true;
-   else 
+   ELSE 
       return false;
-   end if;
-END
+   END IF;
+END //
