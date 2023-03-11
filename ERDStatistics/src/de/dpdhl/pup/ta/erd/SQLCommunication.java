@@ -78,25 +78,26 @@ public class SQLCommunication {
         }
     }
     
-    public static void insertEntity(int uTime, String sDate, double dIn, double dOut, int reportId) throws Exception{
+    public static void insertEntity(int uTime, String sDate, double dIn, double dOut, int reportId, int itSystemId) throws Exception{
         SQLCommunication com = new SQLCommunication();
         Connection con = com.getConnection();
         if (con != null) {
             DateFormat format = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
             Date date = format.parse(sDate);
             java.sql.Timestamp timestamp = new java.sql.Timestamp(date.getTime());
-            CallableStatement cs = (CallableStatement) con.prepareCall("{call insertBandwidth(?,?,?,?,?)}");
+            CallableStatement cs = (CallableStatement) con.prepareCall("{call insertBandwidth(?,?,?,?,?,?)}");
             cs.setInt(1, uTime);
             cs.setTimestamp(2, timestamp);
             cs.setDouble(3, dIn);
             cs.setDouble(4, dOut);
             cs.setInt(5, reportId);
+            cs.setInt(6, itSystemId);
             cs.execute();
         }
     }
     
     
-    public static boolean insertReport(String title, String description, int id, LocalDate date, String section, String lineChart, String fileName, String icto) throws SQLException  {
+    public static boolean insertReport(String title, String description, int id, LocalDate date, String section, String lineChart, String fileName, int icto) throws SQLException  {
         SQLCommunication com = new SQLCommunication();
         Connection con = com.getConnection();
         boolean isInserted = false;
@@ -111,7 +112,7 @@ public class SQLCommunication {
                 cs.setString(5, section);
                 cs.setString(6, lineChart);
                 cs.setString(7, fileName);
-                cs.setString(8, icto);
+                cs.setInt(8, icto);
                 cs.execute();
                 isInserted = true;
             } 
@@ -131,6 +132,20 @@ public class SQLCommunication {
             idExists = cs.getBoolean(1);
         }
         return idExists;
+    }
+    
+    public static int getITSystemID(String name) throws SQLException  {
+        SQLCommunication com = new SQLCommunication();
+        Connection con = com.getConnection();
+        int id = 0;
+        if (con != null) {
+            CallableStatement cs = (CallableStatement) con.prepareCall("{? = call getIDofITSystem(?)}");
+            cs.setString(2, name);
+            cs.registerOutParameter(1, Types.INTEGER);
+            cs.execute();
+            id = cs.getInt(1);
+        }
+        return id;
     }
     
     public static boolean isConnected() {

@@ -402,6 +402,7 @@ public class Controller implements Initializable {
             long sumValueIn  = 0;
             long sumValueOut = 0;
             boolean bBreak   = false;
+            int itSystemID   = 0;
             while ((inString = inStream.readLine()) != null) { // Read data until line with unix time is passed
                 if (bStart) {
                     String[] s = inString.split(",");
@@ -420,7 +421,8 @@ public class Controller implements Initializable {
                                                       (s[1] + ", " + s[2]).replaceAll("\"", ""), 
                                                       Double.parseDouble(s[3]), 
                                                       Double.parseDouble(s[4]),
-                                                      report.getId()); 
+                                                      report.getId(),
+                                                      itSystemID); 
                         log ("SQL Connection established : " + SQLCommunication.isConnected());
                         if (i % _frequence == 0) {
                             XYChart.Data xyIn  = new XYChart.Data(iSum/_frequence, sumValueIn/_frequence);
@@ -457,10 +459,11 @@ public class Controller implements Initializable {
                         }
                     } else if (inString.startsWith("\"unix time\"")) {
                         bStart = true;
+                        itSystemID = SQLCommunication.getITSystemID(_model.getName());
                         SQLCommunication.insertReport(report.getTitle(), report.getDescription(), 
                                                       report.getId(), report.getLocalDate() ,report.getSection(), 
                                                       report.getInfo(),report.getFileName(),
-                                                      _model.getName());
+                                                      itSystemID);
                         log ("SQL Connection established : " + SQLCommunication.isConnected());
                         log(report.getFileName());
                         log(report.getDate());
