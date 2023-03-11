@@ -1,5 +1,4 @@
-DELIMETER //
-CREATE DEFINER=`root`@`localhost` FUNCTION `checkReport`(pID int) RETURNS boolean
+CREATE DEFINER=`root`@`localhost` FUNCTION `getIDofITSystem`(pName VARCHAR(32)) RETURNS int
     DETERMINISTIC
 BEGIN
     DECLARE pID INT;
@@ -7,8 +6,12 @@ BEGIN
     SELECT ID INTO pID from ITSystem where NAME = pName;
     IF (pID IS NULL) then
        SELECT MAX(ID) INTO pID FROM ITSystem;
-       SET pID = pID + 1;
-       INSERT INTO ERD.ITSystem(NAME, ID) VALUES(NAME,pID); 
+       IF (pID IS NULL) then
+          SET pID = 1;
+       ELSE
+          SET pID = pID + 1;
+	   END IF;
+	   INSERT INTO ERD.ITSystem(NAME, ID) VALUES(pName,pID); 
     END IF;
     RETURN pID;
-END //
+END
