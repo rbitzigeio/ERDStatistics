@@ -102,7 +102,7 @@ public class SQLCommunication {
         Connection con = com.getConnection();
         boolean isInserted = false;
         if (con != null) {
-            if (!checkReport(id)) {
+            if (!checkReport(id, date, icto)) {
                 java.sql.Date sqlDate = java.sql.Date.valueOf(date);
                 CallableStatement cs = (CallableStatement) con.prepareCall("{call insertReport(?,?,?,?,?,?,?,?)}");
                 cs.setString(1, title);
@@ -120,12 +120,29 @@ public class SQLCommunication {
         return isInserted;
     }
     
-    public static boolean checkReport(int id) throws SQLException  {
+    public static boolean checkReport(int id, LocalDate date, int icto) throws SQLException  {
         SQLCommunication com = new SQLCommunication();
         Connection con = com.getConnection();
         boolean idExists = false;
         if (con != null) {
-            CallableStatement cs = (CallableStatement) con.prepareCall("{? = call checkReport(?)}");
+            java.sql.Date sqlDate = java.sql.Date.valueOf(date);
+            CallableStatement cs = (CallableStatement) con.prepareCall("{? = call checkReport(?,?,?)}");
+            cs.setInt(2, id);
+            cs.setDate(3, sqlDate);
+            cs.setInt(4, icto);
+            cs.registerOutParameter(1, Types.BOOLEAN);
+            cs.execute();
+            idExists = cs.getBoolean(1);
+        }
+        return idExists;
+    }
+    
+    public static boolean checkReportById(int id) throws SQLException  {
+        SQLCommunication com = new SQLCommunication();
+        Connection con = com.getConnection();
+        boolean idExists = false;
+        if (con != null) {
+            CallableStatement cs = (CallableStatement) con.prepareCall("{? = call checkReportById(?)}");
             cs.setInt(2, id);
             cs.registerOutParameter(1, Types.BOOLEAN);
             cs.execute();
