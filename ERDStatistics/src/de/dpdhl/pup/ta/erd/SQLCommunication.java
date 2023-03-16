@@ -78,7 +78,7 @@ public class SQLCommunication {
         }
     }
     
-    public static void insertEntity(int uTime, String sDate, double dIn, double dOut, int reportId, int itSystemId) throws Exception{
+    public static void insertEntity(int uTime, String sDate, double dIn, double dOut, int reportId, int itSystemId) throws Exception {
         SQLCommunication com = new SQLCommunication();
         Connection con = com.getConnection();
         if (con != null) {

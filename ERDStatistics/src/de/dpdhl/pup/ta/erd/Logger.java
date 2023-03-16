@@ -55,7 +55,7 @@ public class Logger {
             
             _ta.positionCaret(0);
         } else {
-            System.out.println("Missing initialization ");
+            System.out.println(text);
         }
     }
 }
