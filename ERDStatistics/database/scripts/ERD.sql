@@ -1,8 +1,13 @@
 use erd;
-select * from ERD.Report;
-delete from ERD.Report;
-select * from ERD.Bandwidth;
-delete from ERD.Bandwidth;
+select * from itsystem;
+select * from report;
+select * from bandwitdth;
+select count(*) from itsystem;
+select count(*) from report;
+select count(*) from bandwidth;
+delete from bandwidth;
+delete from report;
+delete from itsystem;
 drop procedure ERD.insertBandwidth;
 drop procedure ERD.insertReport;
 drop function ERD.checkReport;
