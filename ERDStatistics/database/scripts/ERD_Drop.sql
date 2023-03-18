@@ -1,0 +1,9 @@
+drop table if exists ERD.ITSystem;
+drop table if exists ERD.Report;
+drop table if exists ERD.Bandwidth;
+drop procedure if exists ERD.insertBandwidth;
+drop procedure if exists ERD.insertReport;
+drop function if exists ERD.checkReport;
+drop function if exists ERD.checkReport;
+drop function if exists ERD.checkReportById;
+drop function if exists ERD.getIDofITSystem;
