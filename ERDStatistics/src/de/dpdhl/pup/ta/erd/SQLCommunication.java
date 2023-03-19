@@ -15,6 +15,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -28,6 +29,10 @@ public class SQLCommunication {
     private static final String _PROPERTY_FILE = ".ERD.properties"; 
     private static Properties   _PROPS         = new Properties();
     private static Connection   connection;
+    
+    static {
+        Locale.setDefault(new Locale("en", "EN"));
+    }
     
     private void SQLConnection() {
     }
