@@ -9,12 +9,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -33,10 +37,7 @@ public class SQLCommunication {
     static {
         Locale.setDefault(new Locale("en", "EN"));
     }
-    
-    private void SQLConnection() {
-    }
-    
+        
     public SQLCommunication getInstance() {
        return this;    
     }
@@ -173,4 +174,78 @@ public class SQLCommunication {
     public static boolean isConnected() {
         return connection != null;
     }
+    
+    public static void cleanBandwidth(String itSystem) throws SQLException {
+        SQLCommunication com = new SQLCommunication();
+        Connection con = com.getConnection();
+        if (con != null) {
+            Statement statement = con.createStatement();
+            String sql = "select * from bandwidth where ITSystem = (select ID from ITSystem where name ='" + itSystem + "') order by FormattedTime;";
+            System.out.println(sql);
+            ResultSet rs = statement.executeQuery(sql);
+            Bandwidth bOld = null;
+            int sizeOfDoubleddRows   = 0;
+            int sizeOfDeletedRows   = 0;
+            int sizeOfUndefinedRows = 0;
+            while(rs.next()) {
+                Bandwidth bNew = new Bandwidth(rs.getInt(1), rs.getDate(2), rs.getInt(5), rs.getInt(6));
+                if (bOld != null) {
+                    if (bNew.isEqual(bOld)) {
+                        String sql2 = "select count(*) from bandwidth where ITSystem=" + bOld.getItSystem() + 
+                                      " and UnixTime=" + bOld.getUnixTime() +
+                                      " and ReportID=" + bOld.getReportID();
+                        //System.out.println(sql2);
+                        Statement statement2 = con.createStatement();
+                        ResultSet rs2 = statement2.executeQuery(sql2);
+                        int size = 0;
+                        while(rs2.next()) {
+                            size = rs2.getInt(1);
+                        }
+                        rs2.close();
+                        if (size == 1) {
+                            sizeOfDoubleddRows++;
+                            String sql3 = "delete from bandwidth where ITSystem=" + bOld.getItSystem() + 
+                                          " and UnixTime=" + bOld.getUnixTime() +
+                                          " and ReportID=" + bOld.getReportID();
+                            Statement statement3 = con.createStatement();
+                            statement3.executeUpdate(sql3);
+                            /*
+                            ResultSet rs3 = statement3.executeQuery(sql3);
+                            while(rs3.next()){
+                                System.out.print("ID: " + rs3.getInt("UnixTime"));
+                            }
+                            rs3.close();
+                            */
+                            sizeOfDeletedRows++;
+                        } else {
+                            sizeOfUndefinedRows++;
+                            System.out.println(sql2);
+                        }
+                    }
+                }
+                bOld = bNew;
+            }
+            System.out.println("IT-System: " + itSystem);
+            System.out.println("   Eindeutige  doppelte Einträge: " + sizeOfDoubleddRows);
+            System.out.println("   Gelöschte   doppelte Einträge: " + sizeOfDeletedRows);
+            System.out.println("   Mehrdeutige doppelte Einträge: " + sizeOfUndefinedRows);
+        }
+    }
+    
+     public static List<String> getITSysteme() throws SQLException  {
+        SQLCommunication com = new SQLCommunication();
+        Connection       con = com.getConnection();
+        List<String> alITSysteme = new ArrayList<>();
+        if (con != null) {
+            Statement statement = con.createStatement();
+            String sql = "select NAME from ITSystem order by ID;";
+            System.out.println(sql);
+            ResultSet rs = statement.executeQuery(sql);
+            while(rs.next()) {
+                alITSysteme.add(rs.getString(1));
+            }
+        }
+        return alITSysteme;
+    }
+    
 }
