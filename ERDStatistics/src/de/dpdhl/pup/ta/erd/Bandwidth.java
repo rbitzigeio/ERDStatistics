@@ -2,6 +2,7 @@ package de.dpdhl.pup.ta.erd;
 
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -13,12 +14,13 @@ import java.sql.Date;
  * @author RBO-VS-Admin
  */
 public class Bandwidth {
-    private int    _unixTime;
-    private Date   _date;
-    private Double _bpsIn;
-    private Double _bpsOut;
-    private int    _reportID;
-    private int    _itSystem;
+    private int       _unixTime;
+    private Date      _date;
+    private Double    _bpsIn;
+    private Double    _bpsOut;
+    private int       _reportID;
+    private int       _itSystem;
+    private Timestamp _time;
     
     public Bandwidth() {
         
@@ -120,5 +122,19 @@ public class Bandwidth {
      */
     public void setItSystem(int itSystem) {
         this._itSystem = itSystem;
+    }
+    
+    /**
+     * @return the _time
+     */
+    public Timestamp getTimestamp() {
+        return _time;
+    }
+
+    /**
+     * @param _time the _time to set
+     */
+    public void setTimestamp(Timestamp time) {
+        this._time = time;
     }
 }

@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -232,7 +233,7 @@ public class SQLCommunication {
         }
     }
     
-     public static List<String> getITSysteme() throws SQLException  {
+    public static List<String> getITSysteme() throws SQLException  {
         SQLCommunication com = new SQLCommunication();
         Connection       con = com.getConnection();
         List<String> alITSysteme = new ArrayList<>();
@@ -248,4 +249,40 @@ public class SQLCommunication {
         return alITSysteme;
     }
     
+    public static List<Bandwidth> getBandwidthOfITSystem(String name) throws SQLException  {
+       String sql = "select * from bandwidth where ITSystem = (select ID from ITSystem where name ='" + name + "') order by FormattedTime;";
+       return getBandwidth(sql);
+    }
+    
+    public static List<Bandwidth> getBandwidthOfITSystem(String name, String startDate) throws SQLException  {
+        String sql = "select * from bandwidth where ITSystem = (select ID from ITSystem where name ='" + name + 
+                     "') and Date(FormattedTime) >= '" + startDate + "' order by FormattedTime;";
+        return getBandwidth(sql);
+    }
+    
+    public static List<Bandwidth> getBandwidthOfITSystem(String name, String startDate, String endDate) throws SQLException  {
+        String sql = "select * from bandwidth where ITSystem = (select ID from ITSystem where name ='" + name + 
+                     "') and Date(FormattedTime) between '" + startDate + "' and '" + endDate + "' order by FormattedTime;";
+        return getBandwidth(sql);
+    }
+    
+    private static List<Bandwidth> getBandwidth(String sql) throws SQLException  {
+        SQLCommunication com = new SQLCommunication();
+        Connection       con = com.getConnection();
+        List<Bandwidth> alBandwidth = new ArrayList<>();
+        if (con != null) {
+            Statement statement = con.createStatement();
+            System.out.println(sql);
+            ResultSet rs = statement.executeQuery(sql);
+            while(rs.next()) {
+                Bandwidth b = new Bandwidth(rs.getInt(1), rs.getDate(2), rs.getInt(5), rs.getInt(6));
+                b.setBpsIn(rs.getDouble(3));
+                b.setBpsOut(rs.getDouble(4));
+                b.setTimestamp(rs.getTimestamp(2));
+                
+                alBandwidth.add(b);
+            }
+        }
+        return alBandwidth;
+    }
 }
