@@ -116,6 +116,12 @@ public class Controller implements Initializable {
         log("Controller: handleExitAction");
         System.exit(0);
     }
+    
+     //------------------------------------
+    // Exit application and close windows
+    @FXML private void handleTreeSelectionChangedAction(ActionEvent event) {
+        log("Controller: handleTreeSelectionChangedAction");
+    }
     //-------------------
     // Linear Regression
     @FXML private void handleLinRegAction(ActionEvent event) {
@@ -417,6 +423,7 @@ public class Controller implements Initializable {
                         sumValueIn    = sumValueIn  + valueIn; 
                         sumValueOut   = sumValueOut + valueOut;
                         iSum          = iSum + i;
+                        /*
                         SQLCommunication.insertEntity(Integer.parseInt(s[0]), 
                                                       (s[1] + ", " + s[2]).replaceAll("\"", ""), 
                                                       Double.parseDouble(s[3]), 
@@ -424,6 +431,7 @@ public class Controller implements Initializable {
                                                       report.getId(),
                                                       itSystemID); 
                         log ("SQL Connection established : " + SQLCommunication.isConnected());
+                        */
                         if (i % _frequence == 0) {
                             XYChart.Data xyIn  = new XYChart.Data(iSum/_frequence, sumValueIn/_frequence);
                             XYChart.Data xyOut = new XYChart.Data(iSum/_frequence, sumValueOut/_frequence);
@@ -460,11 +468,13 @@ public class Controller implements Initializable {
                     } else if (inString.startsWith("\"unix time\"")) {
                         bStart = true;
                         itSystemID = SQLCommunication.getITSystemID(_model.getName());
+                        /*
                         SQLCommunication.insertReport(report.getTitle(), report.getDescription(), 
                                                       report.getId(), report.getLocalDate() ,report.getSection(), 
                                                       report.getInfo(),report.getFileName(),
                                                       itSystemID);
                         log ("SQL Connection established : " + SQLCommunication.isConnected());
+                        */
                         log(report.getFileName());
                         log(report.getDate());
                         log(report.getId());

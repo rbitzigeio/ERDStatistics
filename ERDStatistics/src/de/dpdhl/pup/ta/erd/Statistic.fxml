@@ -38,7 +38,7 @@
             <left>
                 <ScrollPane prefHeight="675.0" prefWidth="204.0" BorderPane.alignment="CENTER">
                     <content>
-                       <TreeView fx:id="tvStatistic" prefHeight="672.0" prefWidth="227.0" onMouseClicked="#treeSelectionChanged" />
+                       <TreeView fx:id="tvStatistic" prefHeight="672.0" prefWidth="227.0"/> <!-- onMouseClicked="#handleTreeSelectionChangedAction" / -->
                     </content>
                 </ScrollPane>
             </left>
