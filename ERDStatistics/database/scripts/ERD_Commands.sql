@@ -4,6 +4,8 @@ select * from report;
 select * from report where ITSystem=7;
 select * from bandwidtth;
 select count(*) from bandwidth where ITSystem=(select ID from ITSystem where name ="OPTRA");
+select count(*) from bandwidth group by ITSystem order by ITSystem;
+select count(*) from report group by ITSystem order by ITSystem;
 select * from bandwidth where ITSystem=(select ID from ITSystem where name ="AKOM") order by UnixTime desc;
 select * from bandwidth where ITSystem=1 and UnixTime=1679786040;
 select * from itsystem;
@@ -13,6 +15,7 @@ select count(*) from bandwidth;
 select * from bandwidth where ITSystem = (select ID from ITSystem where name ="AKOM") and UnixTime=1679954700;
 select * from bandwidth where ITSystem = (select ID from ITSystem where name ="AKOM") order by FormattedTime;
 select distinct(Date(FormattedTime)) from bandwidth where ITSystem = (select ID from ITSystem where name ='AKOM') order by Date(FormattedTime);
+select * from bandwidth where ITSystem = (select ID from ITSystem where name ='AKOM') and Date(FormattedTime) between '2023-03-01' and '2023-03-02';
 #-----------------------------------------------
 # DELETE
 delete from bandwidth where itsystem=7;
