@@ -44,5 +44,6 @@ ALTER TABLE ERD.Report ADD UNIQUE (ID, CreationDate, ITSystem);
 CREATE TABLE if not exists ERD.ITSystem
 (
 NAME VARCHAR(32) NOT NULL,
-ID INT NOT NULL Primary Key
+ID INT NOT NULL Primary Key,
+ICTO VARCHAR(32)
 );
