@@ -38,6 +38,22 @@ public class SQLCommunication {
     static {
         Locale.setDefault(new Locale("en", "EN"));
     }
+
+    private static List<Date> getDateValues(String sql) throws SQLException {
+        SQLCommunication com      = new SQLCommunication();
+        Connection       con      = com.getConnection();
+        List<Date>       alValues = new ArrayList<>();
+        if (con != null) {
+            Statement statement = con.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+            while(rs.next()) {
+                alValues.add(rs.getDate(1));
+            }
+            rs.close();
+            statement.close();
+        }
+        return alValues;
+    }
         
     public SQLCommunication getInstance() {
        return this;    
@@ -251,6 +267,25 @@ public class SQLCommunication {
         return alITSysteme;
     }
     
+    private static List<ITSystem> getAllITSystems() throws SQLException  {
+        SQLCommunication com         = new SQLCommunication();
+        Connection       con         = com.getConnection();
+        List<ITSystem>   alITSysteme = new ArrayList<>();
+        if (con != null) {
+            Statement statement = con.createStatement();
+            String sql = "select * from ITSystem order by ID;";
+            System.out.println(sql);
+            ResultSet rs = statement.executeQuery(sql);
+            while(rs.next()) {
+                ITSystem its = new ITSystem(rs.getInt(2),rs.getString(1), rs.getString(3));
+                alITSysteme.add(its);
+            }
+            rs.close();
+            statement.close();
+        }
+        return alITSysteme;
+    }
+    
     private static List<Integer> getIntValues(String sql) throws SQLException {
         SQLCommunication com      = new SQLCommunication();
         Connection       con      = com.getConnection();
@@ -267,6 +302,11 @@ public class SQLCommunication {
         return alValues;
     }
     
+    public static List<Date> getReportDatesOfITSystem(int id) throws SQLException {
+        List<Date> listOfDates  = getDateValues("select CreationDate from report where ITSystem=" + id + " order by CreationDate;");
+        
+        return listOfDates;
+    }
     /**
      * Get information about IT-Systems
      * ID, Name, ICTO, size of reports and size of bandwidth 
@@ -274,19 +314,21 @@ public class SQLCommunication {
      * @throws SQLException 
      */
     public static List<ITSystem> getITSystems() throws SQLException  {
-        List<ITSystem> alITSystems     = new ArrayList();
-        List<String>   alNames         = getNameITSystems();
-        List<Integer>  sizeOfReports   = getIntValues("select count(*) from report group by ITSystem order by ITSystem;");
-        List<Integer>  sizeOfBandwidth = getIntValues("select count(*) from bandwidth group by ITSystem order by ITSystem;");
+        List<ITSystem> alITSystems       = new ArrayList();
+        List<ITSystem> alNames           = getAllITSystems();
+        List<Integer>  sizeOfReports     = getIntValues("select count(*) from report group by ITSystem order by ITSystem;");
+        List<Integer>  sizeOfBandwidth   = getIntValues("select count(*) from bandwidth group by ITSystem order by ITSystem;");
+        List<Date>     listOfFirstDates  = getDateValues("select MIN(CreationDate) from report group by ITSystem order by ITSystem;");
+        List<Date>     listOfLastDates   = getDateValues("select MAX(CreationDate) from report group by ITSystem order by ITSystem;");
+        
         int i=0;
-        for (String s : alNames) {
+        for (ITSystem its : alNames) {
             i++;
-            ITSystem its = ITSystem.getITSystemByID(i);
-            if (its == null) {
-               its = new ITSystem(i, s);
-            }
             its.setSizeOfReports(sizeOfReports.get(i-1));
             its.setSizeOfBandwidth(sizeOfBandwidth.get(i-1));
+            its.setFirstDate(listOfFirstDates.get(i-1));
+            its.setLastDate(listOfLastDates.get(i-1));
+            
             alITSystems.add(its);
         }
         return alITSystems;
