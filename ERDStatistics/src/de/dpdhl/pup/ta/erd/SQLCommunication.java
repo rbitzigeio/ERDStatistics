@@ -12,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -192,12 +193,13 @@ public class SQLCommunication {
         return connection != null;
     }
     
-    public static void cleanBandwidth(String itSystem) throws SQLException {
+    public static void cleanBandwidth(String itSystem, String sDate) throws SQLException {
         SQLCommunication com = new SQLCommunication();
         Connection con = com.getConnection();
         if (con != null) {
             Statement statement = con.createStatement();
-            String sql = "select * from bandwidth where ITSystem = (select ID from ITSystem where name ='" + itSystem + "') order by FormattedTime;";
+            String sql = "select * from bandwidth where ITSystem = (select ID from ITSystem where name ='" + itSystem + "') "
+                    + "and Date(FormattedTime) > '" + sDate + "' order by FormattedTime;";
             System.out.println(sql);
             ResultSet rs = statement.executeQuery(sql);
             Bandwidth bOld = null;
@@ -206,12 +208,11 @@ public class SQLCommunication {
             int sizeOfUndefinedRows = 0;
             while(rs.next()) {
                 Bandwidth bNew = new Bandwidth(rs.getInt(1), rs.getDate(2), rs.getInt(5), rs.getInt(6));
+                bNew.setTimestamp(rs.getTimestamp(2));
                 if (bOld != null) {
                     if (bNew.isEqual(bOld)) {
                         String sql2 = "select count(*) from bandwidth where ITSystem=" + bOld.getItSystem() + 
-                                      " and UnixTime=" + bOld.getUnixTime() +
-                                      " and ReportID=" + bOld.getReportID();
-                        //System.out.println(sql2);
+                                      " and FormattedTime='" + bOld.getTimestamp() + "';";
                         Statement statement2 = con.createStatement();
                         ResultSet rs2 = statement2.executeQuery(sql2);
                         int size = 0;
@@ -219,7 +220,7 @@ public class SQLCommunication {
                             size = rs2.getInt(1);
                         }
                         rs2.close();
-                        if (size == 1) {
+                        if (size > 1) {
                             sizeOfDoubleddRows++;
                             String sql3 = "delete from bandwidth where ITSystem=" + bOld.getItSystem() + 
                                           " and UnixTime=" + bOld.getUnixTime() +
@@ -234,6 +235,7 @@ public class SQLCommunication {
                             rs3.close();
                             */
                             sizeOfDeletedRows++;
+                        } else if (size == 1){
                         } else {
                             sizeOfUndefinedRows++;
                             System.out.println(sql2);

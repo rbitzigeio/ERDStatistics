@@ -34,7 +34,7 @@ public class Bandwidth {
     }
     
     public boolean isEqual(Bandwidth bandwidth) {
-        if (bandwidth.getUnixTime() == this.getUnixTime() && bandwidth.getDate().equals(this.getDate())) {
+        if (bandwidth.getItSystem() == this.getItSystem() && bandwidth.getTimestamp().equals(this.getTimestamp())) {
             return true;
         }
         return false;
