@@ -343,7 +343,7 @@ public class SQLCommunication {
     
     public static List<Bandwidth> getBandwidthOfITSystem(String name, String startDate) throws SQLException  {
         String sql = "select * from bandwidth where ITSystem = (select ID from ITSystem where name ='" + name + 
-                     "') and Date(FormattedTime) >= '" + startDate + "' order by FormattedTime;";
+                     "') and Date(FormattedTime) = '" + startDate + "' order by FormattedTime;";
         return getBandwidth(sql);
     }
     
