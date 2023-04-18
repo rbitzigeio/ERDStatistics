@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -30,8 +31,8 @@ import java.util.Properties;
  */
 public class SQLCommunication {
     
-    private static final String DATABASE_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String DATABASE_URL    = "jdbc:mysql://localhost:3306/ERD";
+    //private static final String DATABASE_DRIVER = "com.mysql.cj.jdbc.Driver";
+    //private static final String DATABASE_URL    = "jdbc:mysql://localhost:3306/ERD";
     private static final String _PROPERTY_FILE = ".ERD.properties"; 
     private static Properties   _PROPS         = new Properties();
     private static Connection   connection;
@@ -80,9 +81,8 @@ public class SQLCommunication {
                 FileInputStream in = new FileInputStream(propFile);
                 _PROPS.load(in);
                 in.close();
-                //Class.forName(_PROPS.getProperty(DATABASE_DRIVER));
-                Class.forName(DATABASE_DRIVER);
-                connection = DriverManager.getConnection(DATABASE_URL, getProperties());
+                Class.forName(_PROPS.getProperty("DATABASE_DRIVER"));
+                connection = DriverManager.getConnection(_PROPS.getProperty("DATABASE_URL"), getProperties());
             } catch (ClassNotFoundException | IOException | SQLException e) {
                 e.printStackTrace();
             }
