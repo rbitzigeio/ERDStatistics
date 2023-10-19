@@ -12,15 +12,12 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -46,13 +43,13 @@ public class SQLCommunication {
         Connection       con      = com.getConnection();
         List<Date>       alValues = new ArrayList<>();
         if (con != null) {
-            Statement statement = con.createStatement();
-            ResultSet rs = statement.executeQuery(sql);
-            while(rs.next()) {
-                alValues.add(rs.getDate(1));
+            try (Statement statement = con.createStatement()) {
+                ResultSet rs = statement.executeQuery(sql);
+                while(rs.next()) {
+                    alValues.add(rs.getDate(1));
+                }
+                rs.close();
             }
-            rs.close();
-            statement.close();
         }
         return alValues;
     }
@@ -326,10 +323,10 @@ public class SQLCommunication {
         int i=0;
         for (ITSystem its : alNames) {
             i++;
-            its.setSizeOfReports(sizeOfReports.get(i-1));
-            its.setSizeOfBandwidth(sizeOfBandwidth.get(i-1));
-            its.setFirstDate(listOfFirstDates.get(i-1));
-            its.setLastDate(listOfLastDates.get(i-1));
+            its.setSizeOfReports(sizeOfReports.get(i));
+            its.setSizeOfBandwidth(sizeOfBandwidth.get(i));
+            its.setFirstDate(listOfFirstDates.get(i));
+            its.setLastDate(listOfLastDates.get(i));
             
             alITSystems.add(its);
         }
