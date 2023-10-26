@@ -350,6 +350,16 @@ public class SQLCommunication {
         return getBandwidth(sql);
     }
     
+    public static List<Bandwidth> getBandwidthOfITSystem2(String name, String startDate) throws SQLException  {
+        String sql = "select ID from report where ITSystem = (select ID from ITSystem where name ='" + name + 
+                     "') and Date(CreationDate) = '" + startDate + "';";
+        int id = getReportID(sql);
+        // Result is ID
+        String sql2 = "select * from bandwidth where ITSystem = (select ID from ITSystem where name ='" + name + 
+                     "') and ReportID = '" + id  + "';";
+        return getBandwidth(sql2);
+    }
+     
     private static List<Bandwidth> getBandwidth(String sql) throws SQLException  {
         SQLCommunication com = new SQLCommunication();
         Connection       con = com.getConnection();
@@ -368,5 +378,20 @@ public class SQLCommunication {
             }
         }
         return alBandwidth;
+    }
+    
+    private static int getReportID(String sql) throws SQLException  {
+        int id = 0;
+        SQLCommunication com = new SQLCommunication();
+        Connection       con = com.getConnection();
+        if (con != null) {
+            Statement statement = con.createStatement();
+            System.out.println(sql);
+            ResultSet rs = statement.executeQuery(sql);
+            while(rs.next()) {
+                id = rs.getInt(1);
+            }
+        }
+        return id;
     }
 }
