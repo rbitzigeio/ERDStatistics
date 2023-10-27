@@ -29,6 +29,18 @@ select * from bandwidth where ITSystem = (select ID from ITSystem where name ="A
 select distinct(Date(FormattedTime)) from bandwidth where ITSystem = (select ID from ITSystem where name ='AKOM') order by Date(FormattedTime);
 select * from bandwidth where ITSystem = (select ID from ITSystem where name ='AKOM') and Date(FormattedTime) between '2023-03-01' and '2023-03-02';
 #-----------------------------------------------
+# INDEXES 
+select Max(BitsPerSecIn) from Bandwidth where ITSystem = 1;
+show indexes from bandwidth;
+create index idx_FormattedTime on bandwidth(FormattedTime);
+create index idx_ReportID on bandwidth(ReportID);
+select * from bandwidth where ITSystem = 1 and UnixTime > 169628400 and UnixTime < 1696370340;
+select * from bandwidth where ITSystem = (select ID from ITSystem where name ='Infrastruktur') and Date(FormattedTime) = '2023-10-03' order by FormattedTime;
+select * from bandwidth where ITSystem = 1 and ReportID=327725;
+select * from bandwidth where ITSystem = 1 and ReportID=328670;
+select * from bandwidth where ITSystem = (select ID from ITSystem where name ='Infrastruktur') and ReportID = 327725;
+select ID from Report where ITSystem = (select ID from ITSystem where name ='Infrastruktur') and Date(CreationDate) = '2023-10-03';
+#-----------------------------------------------
 # DELETE
 delete from bandwidth where itsystem=7;
 delete from bandwidth where reportID=308695;
