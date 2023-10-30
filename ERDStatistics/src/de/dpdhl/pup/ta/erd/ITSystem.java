@@ -5,6 +5,7 @@
 package de.dpdhl.pup.ta.erd;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +23,7 @@ public class ITSystem {
     private int    _sizeOfBandwidth;
     private Date   _firstDate;
     private Date   _lastDate;
+    private Date   _actDate;
     
     
     public static List<ITSystem> _listOfITSystems = new ArrayList();
@@ -136,9 +138,23 @@ public class ITSystem {
     }
 
     /**
-     * @param _lastDate the _lastDate to set
+     * @param _lastDate the _actDate to set
      */
     public void setLastDate(Date _lastDate) {
         this._lastDate = _lastDate;
+    }
+    
+    /**
+     * @return the _actDate
+     */
+    public Date getActDate() {
+        return _actDate;
+    }
+
+    /**
+     * @param _actDate the _actDate to set
+     */
+    public void setActDate(Date _actDate) {
+        this._actDate = _actDate;
     }
 }

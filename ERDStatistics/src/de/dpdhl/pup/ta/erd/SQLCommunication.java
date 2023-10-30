@@ -350,6 +350,21 @@ public class SQLCommunication {
         return getBandwidth(sql);
     }
     
+    public static List<Bandwidth> getMaxBandwidthOfITSystem(String name, String startDate, String endDate) throws SQLException  {
+        // select Date(FormattedTime), Max(BitsPerSecIn), Max(BitsPerSecOut) 
+        // from bandwidth 
+        // where ITSystem=1 and Date(FormattedTime) 
+        // and Date(FormattedTime) between "2023-09-25" and "2023-10-01" 
+        // group by Date(FormattedTime) order by Date(FormattedTime);
+        String sql = "select Date(FormattedTime), Max(BitsPerSecIn), Max(BitsPerSecOut) from bandwidth "
+                + "where ITSystem=(select ID from ITSystem where name ='" + name
+                + "') and Date(FormattedTime) between '" + startDate + "' and '" + endDate 
+                + "' group by Date(FormattedTime) order by Date(FormattedTime);";
+        //System.out.println(sql);
+        return getMaxBandwidth(sql);
+    }
+    
+    
     public static List<Bandwidth> getBandwidthOfITSystem2(String name, String startDate) throws SQLException  {
         String sql = "select ID from report where ITSystem = (select ID from ITSystem where name ='" + name + 
                      "') and Date(CreationDate) = '" + startDate + "';";
@@ -366,13 +381,34 @@ public class SQLCommunication {
         List<Bandwidth> alBandwidth = new ArrayList<>();
         if (con != null) {
             Statement statement = con.createStatement();
-            System.out.println(sql);
+            //System.out.println(sql);
             ResultSet rs = statement.executeQuery(sql);
             while(rs.next()) {
                 Bandwidth b = new Bandwidth(rs.getInt(1), rs.getDate(2), rs.getInt(5), rs.getInt(6));
                 b.setBpsIn(rs.getDouble(3));
                 b.setBpsOut(rs.getDouble(4));
                 b.setTimestamp(rs.getTimestamp(2));
+                
+                alBandwidth.add(b);
+            }
+        }
+        return alBandwidth;
+    }
+    
+    private static List<Bandwidth> getMaxBandwidth(String sql) throws SQLException  {
+        SQLCommunication com = new SQLCommunication();
+        Connection       con = com.getConnection();
+        List<Bandwidth> alBandwidth = new ArrayList<>();
+        if (con != null) {
+            Statement statement = con.createStatement();
+            //System.out.println(sql);
+            ResultSet rs = statement.executeQuery(sql);
+            while(rs.next()) {
+                Bandwidth b = new Bandwidth();
+                b.setTimestamp(rs.getTimestamp(1));
+                b.setBpsIn(rs.getDouble(2));
+                b.setBpsOut(rs.getDouble(3));
+                
                 
                 alBandwidth.add(b);
             }
