@@ -50,14 +50,13 @@ ICTO VARCHAR(32)
 #
 #------------------------------------------------------------
 #
-CREATE TABLE `maxbandwidth` (
-  `id` int NOT NULL,
+CREATE TABLE if not exists `maxbandwidth` (
+  `id` int NOT NULL AUTO_INCREMENT Primary Key,
   `itsystem` int NOT NULL,
   `reportid` int NOT NULL,
   `date` date NOT NULL,
   `maxbandwidthin` double NOT NULL,
   `maxbandwidthout` double NOT NULL,
   `timein` datetime NOT NULL,
-  `timeout` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `timeout` datetime NOT NULL
+);
