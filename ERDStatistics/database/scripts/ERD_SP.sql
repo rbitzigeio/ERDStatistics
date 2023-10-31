@@ -70,3 +70,10 @@ BEGIN
 END//
 
 Delimiter ;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertMaxBandwidth`(IN iid int, IN iitsystem int, IN ddate date, 
+IN dmaxbandwidthin double, IN dmaxbandwidthout double, IN ttimein timestamp, IN ttimeout timestamp)
+BEGIN 
+   INSERT INTO ERD.maxbandwidth (id, itsystem, date, maxbandwidthin, maxbandwidthout, timein, timeout)
+   VALUES (iid, iitsystem, ddate, dmaxbandwidthin, dmaxbandwidthout, ttimein, ttimeout);
+END//
