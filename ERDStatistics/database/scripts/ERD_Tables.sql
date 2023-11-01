@@ -47,3 +47,16 @@ NAME VARCHAR(32) NOT NULL,
 ID INT NOT NULL Primary Key,
 ICTO VARCHAR(32)
 );
+#
+#------------------------------------------------------------
+#
+CREATE TABLE if not exists `maxbandwidth` (
+  `id` int NOT NULL AUTO_INCREMENT Primary Key,
+  `itsystem` int NOT NULL,
+  `reportid` int NOT NULL,
+  `date` date NOT NULL,
+  `maxbandwidthin` double NOT NULL,
+  `maxbandwidthout` double NOT NULL,
+  `timein` datetime NOT NULL,
+  `timeout` datetime NOT NULL
+);

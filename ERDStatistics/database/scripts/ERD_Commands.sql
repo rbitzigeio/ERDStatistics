@@ -44,6 +44,11 @@ select * from bandwidth where ITSystem = 1 and ReportID=327725;
 select * from bandwidth where ITSystem = 1 and ReportID=328670;
 select * from bandwidth where ITSystem = (select ID from ITSystem where name ='Infrastruktur') and ReportID = 327725;
 select ID from Report where ITSystem = (select ID from ITSystem where name ='Infrastruktur') and Date(CreationDate) = '2023-10-03';
+select 24*60*60*5;
+select (select convert(Sum(BitsPerSecIn)/8/1000000000, UNSIGNED)), (select convert(Sum(BitsPerSecOut)/8/1000000000, UNSIGNED)) from bandwidth where ITSystem = (select ID from ITSystem where name ='Infrastruktur') and ReportID = 327725;
+select Sum(BitsPerSecIn), Sum(BitsPerSecOut) from bandwidth where ITSystem = (select ID from ITSystem where name ='Infrastruktur') and Date(FormattedTime) = '2023-10-03';
+select * from report where id = 327725;
+select * from report where itsystem = (select ID from ITSystem where name ='Infrastruktur') and Date(CreationDate) = '2023-10-03';
 #-----------------------------------------------
 # DELETE
 delete from bandwidth where itsystem=7;
