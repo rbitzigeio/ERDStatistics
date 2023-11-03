@@ -117,6 +117,28 @@ public class SQLCommunication {
         }
     }
     
+    public static void insertMaxBandwidth(int itSystemId, double dIn, double dOut, String sDateIn, String sDateOut) throws Exception {
+        SQLCommunication com = new SQLCommunication();
+        Connection con = com.getConnection();
+        if (con != null) {
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            DateFormat format2 = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+            Date dateIn  = format2.parse(sDateIn);
+            Date date    = format.parse(sDateIn);         
+            Date dateOut = format2.parse(sDateOut);
+            java.sql.Timestamp timestamp    = new java.sql.Timestamp(date.getTime());
+            java.sql.Timestamp timestampIn  = new java.sql.Timestamp(dateIn.getTime());
+            java.sql.Timestamp timestampOut = new java.sql.Timestamp(dateOut.getTime());
+            CallableStatement cs = (CallableStatement) con.prepareCall("{call insertMaxBandwidth(?,?,?,?,?,?)}");
+            cs.setInt(1, itSystemId);
+            cs.setTimestamp(2, timestamp);
+            cs.setDouble(3, dIn);
+            cs.setDouble(4, dOut);
+            cs.setTimestamp(5, timestampIn);
+            cs.setTimestamp(6, timestampOut);
+            cs.execute();
+        }
+    }
     
     public static boolean insertReport(String title, String description, int id, LocalDate date, String section, String lineChart, String fileName, int icto) throws SQLException  {
         SQLCommunication com = new SQLCommunication();

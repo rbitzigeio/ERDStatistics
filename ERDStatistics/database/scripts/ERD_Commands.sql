@@ -51,6 +51,7 @@ select * from report where itsystem = (select ID from ITSystem where name ='Infr
 delete from bandwidth where itsystem=7;
 delete from bandwidth where reportID=308695;
 delete from bandwidth where Date(FormattedTime) ="2023-04-05";
+delete from report where id = 308695;
 delete from report where ITSystem=7;
 select * from report where ID=308695;
 select * from bandwidth where ReportID=308695;
