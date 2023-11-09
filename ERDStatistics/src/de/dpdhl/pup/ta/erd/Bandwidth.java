@@ -21,6 +21,7 @@ public class Bandwidth {
     private int       _reportID;
     private int       _itSystem;
     private Timestamp _time;
+    private int       _id;
     
     public Bandwidth() {
         
@@ -111,19 +112,32 @@ public class Bandwidth {
     }
     
     /**
-     * @return the _reportID
+     * @return the _itSystem
      */
     public int getItSystem() {
         return _itSystem;
     }
 
     /**
-     * @param _reportID the _reportID to set
+     * @param _itSystem the _itSystem to set
      */
     public void setItSystem(int itSystem) {
         this._itSystem = itSystem;
     }
     
+    /**
+     * @return the _id
+     */
+    public int getId() {
+        return _id;
+    }
+
+    /**
+     * @param _id the _itSystem to set
+     */
+    public void setId(int id) {
+        this._id = id;
+    }
     /**
      * @return the _time
      */

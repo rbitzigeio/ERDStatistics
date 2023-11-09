@@ -53,6 +53,32 @@ public class SQLCommunication {
         }
         return alValues;
     }
+
+    private static List<Report> getReport(String sql) throws SQLException  {
+        SQLCommunication com      = new SQLCommunication();
+        Connection       con      = com.getConnection();
+        List<Report>     alValues = new ArrayList<>();
+        if (con != null) {
+            try (Statement statement = con.createStatement()) {
+                ResultSet rs = statement.executeQuery(sql);
+                while(rs.next()) {
+                    String title        = rs.getString(1);
+                    String description  = rs.getString(2);
+                    int    id           = rs.getInt(3);
+                    Date   creationDate = rs.getDate(4);
+                    String section      = rs.getString(5);
+                    String info         = rs.getString(6);
+                    String fileName     = rs.getString(7);
+                    int    itsystem     = rs.getInt(8);
+                    Report report       = new Report(id, title, description, info, fileName);
+                    report.setITSystem(itsystem);
+                    alValues.add(report);
+                }
+                rs.close();
+            }
+        }
+        return alValues;
+    }
         
     public SQLCommunication getInstance() {
        return this;    
@@ -117,25 +143,27 @@ public class SQLCommunication {
         }
     }
     
-    public static void insertMaxBandwidth(int itSystemId, double dIn, double dOut, String sDateIn, String sDateOut) throws Exception {
+    public static void insertMaxBandwidth(int itSystemId, int reportId, double dIn, double dOut, String sDateIn, String sDateOut) throws Exception {
         SQLCommunication com = new SQLCommunication();
         Connection con = com.getConnection();
         if (con != null) {
-            DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            DateFormat format2 = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
-            Date dateIn  = format2.parse(sDateIn);
-            Date date    = format.parse(sDateIn);         
-            Date dateOut = format2.parse(sDateOut);
+            SimpleDateFormat format  = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat format2 = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss"); 
+            SimpleDateFormat format3 = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss");  
+            Date             dateIn  = format3.parse(sDateIn);
+            Date             date    = format3.parse(sDateIn);         
+            Date             dateOut = format3.parse(sDateOut);            
             java.sql.Timestamp timestamp    = new java.sql.Timestamp(date.getTime());
             java.sql.Timestamp timestampIn  = new java.sql.Timestamp(dateIn.getTime());
             java.sql.Timestamp timestampOut = new java.sql.Timestamp(dateOut.getTime());
-            CallableStatement cs = (CallableStatement) con.prepareCall("{call insertMaxBandwidth(?,?,?,?,?,?)}");
+            CallableStatement cs = (CallableStatement) con.prepareCall("{call insertMaxBandwidth(?,?,?,?,?,?,?)}");
             cs.setInt(1, itSystemId);
-            cs.setTimestamp(2, timestamp);
-            cs.setDouble(3, dIn);
-            cs.setDouble(4, dOut);
-            cs.setTimestamp(5, timestampIn);
-            cs.setTimestamp(6, timestampOut);
+            cs.setInt(2, reportId);
+            cs.setTimestamp(3, timestamp);
+            cs.setDouble(4, dIn);
+            cs.setDouble(5, dOut);
+            cs.setTimestamp(6, timestampIn);
+            cs.setTimestamp(7, timestampOut);
             cs.execute();
         }
     }
@@ -354,6 +382,11 @@ public class SQLCommunication {
         }
         return alITSystems;
     }
+  
+    public static List<Report>getReportsOfITSystem(int id) throws SQLException {
+        String sql = "select * from report where ITSystem='" + id + "';";
+        return getReport(sql);
+    }
     
     public static List<Bandwidth> getBandwidthOfITSystem(String name) throws SQLException  {
        String sql = "select * from bandwidth where ITSystem = (select ID from ITSystem where name ='" + name + "') order by FormattedTime;";
@@ -373,11 +406,6 @@ public class SQLCommunication {
     }
     
     public static List<Bandwidth> getMaxBandwidthOfITSystem(String name, String startDate, String endDate) throws SQLException  {
-        // select Date(FormattedTime), Max(BitsPerSecIn), Max(BitsPerSecOut) 
-        // from bandwidth 
-        // where ITSystem=1 and Date(FormattedTime) 
-        // and Date(FormattedTime) between "2023-09-25" and "2023-10-01" 
-        // group by Date(FormattedTime) order by Date(FormattedTime);
         String sql = "select Date(FormattedTime), Max(BitsPerSecIn), Max(BitsPerSecOut) from bandwidth "
                 + "where ITSystem=(select ID from ITSystem where name ='" + name
                 + "') and Date(FormattedTime) between '" + startDate + "' and '" + endDate 
@@ -385,16 +413,26 @@ public class SQLCommunication {
         //System.out.println(sql);
         return getMaxBandwidth(sql);
     }
+    public static List<Bandwidth> getMaxBandwidthOfITSystem(int id, String startDate, String endDate) throws SQLException  {
+        String sql = "select Date(FormattedTime), Max(BitsPerSecIn), Max(BitsPerSecOut) from bandwidth "
+                + "where ITSystem=" + id + " and Date(FormattedTime) between '" + startDate + "' and '" + endDate 
+                + "' group by Date(FormattedTime) order by Date(FormattedTime);";
+        //System.out.println(sql);
+        return getMaxBandwidth(sql);
+    }
     
-    
-    public static List<Bandwidth> getBandwidthOfITSystem2(String name, String startDate) throws SQLException  {
-        String sql = "select ID from report where ITSystem = (select ID from ITSystem where name ='" + name + 
-                     "') and Date(CreationDate) = '" + startDate + "';";
-        int id = getReportID(sql);
-        // Result is ID
-        String sql2 = "select * from bandwidth where ITSystem = (select ID from ITSystem where name ='" + name + 
-                     "') and ReportID = '" + id  + "';";
-        return getBandwidth(sql2);
+    public static List<Bandwidth> getMaxBandwidthOfITSystem(int id, String startDate) throws SQLException {
+        String[] column = {"BitsPerSecIn", "BitsPerSecOut"};
+        String sql = "select * from bandwidth where ITSystem = " + id + " and FormattedTime='" 
+                + startDate + "' order by " + column[0] + " desc limit 1;";
+        List<Bandwidth> lIn = getBandwidth(sql);
+        sql = "select * from bandwidth where ITSystem = " + id + " and FormattedTime='" 
+                + startDate + "' order by " + column[1] + " desc limit 1;";
+        List<Bandwidth> lOut = getBandwidth(sql);
+        for (Bandwidth b : lOut) {
+            lIn.add(b);
+        }
+        return lIn;
     }
      
     private static List<Bandwidth> getBandwidth(String sql) throws SQLException  {
@@ -410,6 +448,7 @@ public class SQLCommunication {
                 b.setBpsIn(rs.getDouble(3));
                 b.setBpsOut(rs.getDouble(4));
                 b.setTimestamp(rs.getTimestamp(2));
+                b.setId(rs.getInt(7));
                 
                 alBandwidth.add(b);
             }
@@ -430,8 +469,6 @@ public class SQLCommunication {
                 b.setTimestamp(rs.getTimestamp(1));
                 b.setBpsIn(rs.getDouble(2));
                 b.setBpsOut(rs.getDouble(3));
-                
-                
                 alBandwidth.add(b);
             }
         }

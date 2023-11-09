@@ -21,6 +21,7 @@ public class Report {
     private String    _fileName;
     private String    _section;
     private String    _date;
+    private int       _itsystem;
     
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern( "dd.MM.yyyy" );
     
@@ -168,4 +169,10 @@ public class Report {
         this._date   = formatter.format( ld );
     }
     
+    public void setITSystem(int itsystem) {
+        this._itsystem = itsystem;
+    }
+    public int getITSystem() {
+        return this._itsystem;
+    }
 }
