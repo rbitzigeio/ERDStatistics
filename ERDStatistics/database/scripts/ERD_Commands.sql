@@ -32,6 +32,10 @@ select * from bandwidth where ITSystem = (select ID from ITSystem where name ="A
 select * from bandwidth where ITSystem = (select ID from ITSystem where name ="AKOM") order by FormattedTime;
 select distinct(Date(FormattedTime)) from bandwidth where ITSystem = (select ID from ITSystem where name ='AKOM') order by Date(FormattedTime);
 select * from bandwidth where ITSystem = (select ID from ITSystem where name ='AKOM') and Date(FormattedTime) between '2023-03-01' and '2023-03-02';
+SELECT * FROM erd.bandwidth where itsystem=1;
+select * from bandwidth where itsystem=1 and FormattedTime="2023-11-03" order by bitspersecin desc limit 1;
+select max(bitspersecin) from bandwidth where itsystem=1 and FormattedTime="2023-11-03";
+select * from bandwidth where ITSystem = 1 and FormattedTime='2023-11-03' order by BitsPerSecOut desc limit 1;
 #-----------------------------------------------
 # INDEXES 
 select Max(BitsPerSecIn) from Bandwidth where ITSystem = 1;
