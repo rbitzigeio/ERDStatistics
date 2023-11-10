@@ -36,6 +36,16 @@ SELECT * FROM erd.bandwidth where itsystem=1;
 select * from bandwidth where itsystem=1 and FormattedTime="2023-11-03" order by bitspersecin desc limit 1;
 select max(bitspersecin) from bandwidth where itsystem=1 and FormattedTime="2023-11-03";
 select * from bandwidth where ITSystem = 1 and FormattedTime='2023-11-03' order by BitsPerSecOut desc limit 1;
+SELECT * FROM erd.bandwidth where itsystem=1;
+select * from bandwidth where itsystem=1 and FormattedTime="2023-11-03" order by bitspersecin desc limit 1;
+select max(bitspersecin) from bandwidth where itsystem=1 and FormattedTime="2023-11-09";
+select * from bandwidth where ITSystem = 1 and Date(FormattedTime)='2023-11-07' order by BitsPerSecOut desc limit 1;
+select distinct id from report where ITSystem = 1 and CreationDate='2023-11-07';
+select Min(UnixTime), Max(UnixTime) from bandwidth where reportid=363804;
+select * from bandwidth where ITSystem = 1 and unixtime between 1699312500 and 1699398840 order by BitsPerSecIn desc limit 1;
+select * from bandwidth where ITSystem = 1 and unixtime between 1699312500 and 1699398840 order by BitsPerSecOut desc limit 1;
+select * from bandwidth where id=4744 or id=4840;
+select max(bitspersecin), max(bitspersecout) from bandwidth where reportId=197155;
 #-----------------------------------------------
 # INDEXES 
 select Max(BitsPerSecIn) from Bandwidth where ITSystem = 1;
