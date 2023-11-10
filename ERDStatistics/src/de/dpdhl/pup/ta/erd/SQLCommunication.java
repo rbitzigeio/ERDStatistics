@@ -422,12 +422,16 @@ public class SQLCommunication {
     }
     
     public static List<Bandwidth> getMaxBandwidthOfITSystem(int id, String startDate) throws SQLException {
-        String[] column = {"BitsPerSecIn", "BitsPerSecOut"};
-        String sql = "select * from bandwidth where ITSystem = " + id + " and FormattedTime='" 
-                + startDate + "' order by " + column[0] + " desc limit 1;";
+        String[] column = {"BitsPerSecIn", "BitsPerSecOut"};        
+        String sql = "select distinct id from report where ITSystem = " + id + " and CreationDate='" + startDate + "'";
+        int reportId = getReportID(sql);
+        sql = "select Min(UnixTime), Max(UnixTime) from bandwidth where reportid=" + reportId + ";";
+        int[] extrem = getTimeslot(sql);
+        sql = "select * from bandwidth where ITSystem = " + id + 
+               " and unixtime between " + extrem[0] + " and " + extrem[1] + " order by " + column[0] + " desc limit 1;";
         List<Bandwidth> lIn = getBandwidth(sql);
-        sql = "select * from bandwidth where ITSystem = " + id + " and FormattedTime='" 
-                + startDate + "' order by " + column[1] + " desc limit 1;";
+        sql = "select * from bandwidth where ITSystem = " + id + 
+               " and unixtime between " + extrem[0] + " and " + extrem[1] + " order by " + column[1] + " desc limit 1;";
         List<Bandwidth> lOut = getBandwidth(sql);
         for (Bandwidth b : lOut) {
             lIn.add(b);
@@ -475,18 +479,34 @@ public class SQLCommunication {
         return alBandwidth;
     }
     
-    private static int getReportID(String sql) throws SQLException  {
+    private static int getReportID(String sql) throws SQLException {
         int id = 0;
         SQLCommunication com = new SQLCommunication();
         Connection       con = com.getConnection();
         if (con != null) {
             Statement statement = con.createStatement();
-            System.out.println(sql);
+            // System.out.println(sql);
             ResultSet rs = statement.executeQuery(sql);
             while(rs.next()) {
                 id = rs.getInt(1);
             }
         }
         return id;
+    }
+    
+    private static int[] getTimeslot(String sql) throws SQLException {
+        int[] extrem = new int[2];
+        
+        SQLCommunication com = new SQLCommunication();
+        Connection       con = com.getConnection();
+        if (con != null) {
+            Statement statement = con.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+            while(rs.next()) {
+                extrem[0] = rs.getInt(1);
+                extrem[1] = rs.getInt(2);
+            }
+        }
+        return extrem;
     }
 }
