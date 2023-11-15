@@ -52,18 +52,22 @@
     -->
         <target name="db-export-database" description="export data of schema">
 		<echo message="Export data of database ERD into SQL-File"/>
+		<!-- mysqldump -u erd -p erd > data.sql -->
 	</target>
 
 	<target name="db-export-datastructure" description="export only data structure of schema">
 		<echo message="Export data structure of database ERD into SQL-File"/>
+		<!-- mysqldump -u erd -p erd -d > datastructure.sql -->
 	</target>
 
         <target name="db-export-storedprocedure" description="export stored proceudre and functions of schema">
 		<echo message="Export Stored Procedures and Functions of database ERD into SQL-File"/>
+		<!-- mysqldump -u erd -p erd -d > datastructure.sql -->
 	</target>
 
 	<target name="db-import-database" description="import data of schema">
 		<echo message="Import data of database ERD from SQL-File"/>
+		<!-- mysqldump -u erd -p erd -n -d -t --routines > StPAndF.sql -->
 	</target>
 	<target name="db-import-datastructure" description="import only data structure of schema">
 		<echo message="Import data structure of database ERD from SQL-File"/>
