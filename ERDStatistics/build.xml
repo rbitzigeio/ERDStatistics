@@ -52,7 +52,7 @@
     -->
         <target name="db-export-database" description="export data of schema">
 			<echo message="Export data of database ERD into SQL-File"/>
-			<exec executable="mysqldump" output="..\database\dumps\data.sql">
+			<exec executable="mysqldump" output=".\database\dumps\data.sql">
 				<arg value="--user=erd"/>
 				<arg value="--password=erd"/>
 				<arg value="--host=localhost"/>
@@ -63,23 +63,26 @@
 
 	<target name="db-export-datastructure" description="export only data structure of schema">
 		<echo message="Export data structure of database ERD into SQL-File"/>
-		<exec executable="mysqldump" output="..\database\dumps\datastructure.sql">
+		<exec executable="mysqldump" output=".\database\dumps\datastructure.sql">
 			<arg value="--user=erd"/>
 			<arg value="--password=erd"/>
 			<arg value="--host=localhost"/>
 			<arg value="--port=3306"/>
-			<arg value="erd -d"/>
+			<arg value="erd"/>
+			<arg value="--no-data"/>
 		</exec>
 	</target>
 
-        <target name="db-export-storedprocedure" description="export stored proceudre and functions of schema">
+        <target name="db-export-storedprocedure" description="export stored procedure and functions of schema">
 		<echo message="Export Stored Procedures and Functions of database ERD into SQL-File"/>
-		<exec executable="mysqldump" output="..\database\dumps\datastructure.sql">
+		<exec executable="mysqldump" output=".\database\dumps\storedprocedure.sql">
 			<arg value="--user=erd"/>
 			<arg value="--password=erd"/>
 			<arg value="--host=localhost"/>
 			<arg value="--port=3306"/>
-			<arg value="erd -n -d -t --routines"/>
+			<arg value="erd"/>
+			<arg value="--no-data"/>
+			<arg value="--routines"/>
 		</exec>
 	</target>
 
