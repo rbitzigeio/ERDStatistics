@@ -393,6 +393,12 @@ public class SQLCommunication {
        return getBandwidth(sql);
     }
     
+    public static List<Bandwidth> getBandwidthOfITSystem(int id, String startDate) throws SQLException  {
+        String sql = "select * from bandwidth where ITSystem = " + id + 
+                     " and Date(FormattedTime) = '" + startDate + "' order by FormattedTime;";
+        return getBandwidth(sql);
+    }
+    
     public static List<Bandwidth> getBandwidthOfITSystem(String name, String startDate) throws SQLException  {
         String sql = "select * from bandwidth where ITSystem = (select ID from ITSystem where name ='" + name + 
                      "') and Date(FormattedTime) = '" + startDate + "' order by FormattedTime;";
