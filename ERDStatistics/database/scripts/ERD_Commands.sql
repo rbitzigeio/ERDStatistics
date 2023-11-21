@@ -26,6 +26,12 @@ select * from bandwidth where ITSystem = (select ID from ITSystem where name ='A
 select * from bandwidth where ReportID = 358672;
 select * from report where id = 358672;
 #-----------------------------------------------
+SELECT distinct date FROM ERD.maxbandwidth order by date desc;
+select date, sum(maxbandwidthin), sum(maxbandwidthout) from maxbandwidth group by date order by date desc;
+select unixtime, sum(Bitspersecin), sum(bitspersecout) from bandwidth where unixtime between 1699570800 and 1699657140 group by unixtime;
+select sum(bitspersecin), sum(bitspersecout) from bandwidth where unixtime = 1699570800;
+select formattedtime, min(unixtime), max(unixtime) from bandwidth where formattedtime ="2023-11-10";
+#-----------------------------------------------
 # DELETE
 delete from bandwidth where reportid = 358672;
 delete from bandwidth where itsystem=7;
