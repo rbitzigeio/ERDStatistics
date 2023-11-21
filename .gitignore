@@ -1,3 +1,4 @@
 ERDStatistics/build/
 ERDStatistics/dist/
 ERDStatistics/nbproject/private/private.properties
+ERDStatistics/database/dumps/data.sql
