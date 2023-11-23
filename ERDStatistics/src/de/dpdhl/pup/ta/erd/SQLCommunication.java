@@ -444,7 +444,22 @@ public class SQLCommunication {
         }
         return lIn;
     }
-     
+    
+    public static List<Bandwidth> getMaxBandwidthOfITSystems() throws SQLException {
+        String sql = "select date, sum(maxbandwidthin), sum(maxbandwidthout) from maxbandwidth group by date order by date desc;";
+        List<Bandwidth> lB = getMaxBandwidth(sql);
+        return lB;
+    }
+    
+    public static List<Bandwidth> getBandwidthOfITSystems(String startDate) throws SQLException {   
+        String sql = "select min(unixtime), max(unixtime) from bandwidth where date(formattedtime) = '" + startDate + "';";
+        int[] minmax = SQLCommunication.getTimeslot(sql);
+        String sql2 = "select unixtime, sum(Bitspersecin), sum(bitspersecout) from bandwidth where unixtime between " 
+                      + minmax[0] + " and " + minmax[1] + " group by unixtime";
+        List<Bandwidth> lB = getTotalBandwidth(sql2);
+        return lB;
+    }
+    
     private static List<Bandwidth> getBandwidth(String sql) throws SQLException  {
         SQLCommunication com = new SQLCommunication();
         Connection       con = com.getConnection();
@@ -459,6 +474,26 @@ public class SQLCommunication {
                 b.setBpsOut(rs.getDouble(4));
                 b.setTimestamp(rs.getTimestamp(2));
                 b.setId(rs.getInt(7));
+                
+                alBandwidth.add(b);
+            }
+        }
+        return alBandwidth;
+    }
+    
+    private static List<Bandwidth> getTotalBandwidth(String sql) throws SQLException  {
+        SQLCommunication com = new SQLCommunication();
+        Connection       con = com.getConnection();
+        List<Bandwidth> alBandwidth = new ArrayList<>();
+        if (con != null) {
+            Statement statement = con.createStatement();
+            //System.out.println(sql);
+            ResultSet rs = statement.executeQuery(sql);
+            while(rs.next()) {
+                Bandwidth b = new Bandwidth();
+                b.setUnixTime(rs.getInt(1));
+                b.setBpsIn(rs.getDouble(2));
+                b.setBpsOut(rs.getDouble(3));
                 
                 alBandwidth.add(b);
             }
