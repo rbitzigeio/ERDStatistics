@@ -30,7 +30,10 @@ SELECT distinct date FROM ERD.maxbandwidth order by date desc;
 select date, sum(maxbandwidthin), sum(maxbandwidthout) from maxbandwidth group by date order by date desc;
 select unixtime, sum(Bitspersecin), sum(bitspersecout) from bandwidth where unixtime between 1699570800 and 1699657140 group by unixtime;
 select sum(bitspersecin), sum(bitspersecout) from bandwidth where unixtime = 1699570800;
-select formattedtime, min(unixtime), max(unixtime) from bandwidth where formattedtime ="2023-11-10";
+select min(unixtime), max(unixtime) from bandwidth where date(formattedtime) ="2023-11-28";
+select distinct(creationDate) from report order by creationDate desc;
+select Date(formattedtime), sum(bitspersecin), sum(bitspersecout) from bandwidth where itsystem=1 and Date(formattedtime)="2024-01-23" group by Date(formattedtime);
+select Date(formattedtime), FORMAT(sum(bitspersecin)/8/1000/1000/1000,3), FORMAT(sum(bitspersecout)/8/1000/1000/1000,3) from bandwidth where itsystem=1 group by Date(formattedtime) order by Date(formattedTime);
 #-----------------------------------------------
 # DELETE
 delete from bandwidth where reportid = 358672;

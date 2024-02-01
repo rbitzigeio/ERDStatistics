@@ -79,6 +79,27 @@ public class SQLCommunication {
         }
         return alValues;
     }
+
+    private static List<Bandwidth> getTotalDailyCommunication(String sql, int id) throws SQLException {
+        SQLCommunication com = new SQLCommunication();
+        Connection       con = com.getConnection();
+        List<Bandwidth> alBandwidth = new ArrayList<>();
+        if (con != null) {
+            Statement statement = con.createStatement();
+            //System.out.println(sql);
+            ResultSet rs = statement.executeQuery(sql);
+            while(rs.next()) {
+                Bandwidth b = new Bandwidth();
+                b.setBpsIn(rs.getDouble(2));
+                b.setBpsOut(rs.getDouble(3));
+                b.setTimestamp(rs.getTimestamp(1));
+                b.setId(id);
+                
+                alBandwidth.add(b);
+            }
+        }
+        return alBandwidth;
+    }
         
     public SQLCommunication getInstance() {
        return this;    
@@ -460,6 +481,20 @@ public class SQLCommunication {
         return lB;
     }
     
+    public static List<Bandwidth> getTotalDailyCommunication(String itsystem) throws SQLException {  
+        int id = getITSystemID(itsystem);
+        List<Bandwidth> lB = getTotalDailyCommunication(id);
+        return lB;
+    }
+    
+    public static List<Bandwidth> getTotalDailyCommunication(int itsystem) throws SQLException {  
+        String sql = "select Date(formattedtime), FORMAT(sum(bitspersecin)/8/1000/1000/1000,3)," +
+                     " FORMAT(sum(bitspersecout)/8/1000/1000/1000,3) from bandwidth where itsystem=" + itsystem + 
+                     " group by Date(formattedtime) order by Date(formattedTime)";
+        List<Bandwidth> lB = getTotalDailyCommunication(sql, itsystem);
+        return lB;
+    }
+     
     private static List<Bandwidth> getBandwidth(String sql) throws SQLException  {
         SQLCommunication com = new SQLCommunication();
         Connection       con = com.getConnection();
