@@ -393,13 +393,12 @@ public class SQLCommunication {
         
         int i=0;
         for (ITSystem its : alNames) {
-            i++;
             its.setSizeOfReports(sizeOfReports.get(i));
             its.setSizeOfBandwidth(sizeOfBandwidth.get(i));
             its.setFirstDate(listOfFirstDates.get(i));
             its.setLastDate(listOfLastDates.get(i));
-            
             alITSystems.add(its);
+            i++;
         }
         return alITSystems;
     }

@@ -18,6 +18,7 @@ public class Statistic extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
+/*        
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Statistic.fxml"));
         Parent root = fxmlLoader.load();
         Logger.getInstance().log("FXML loaded");
@@ -29,6 +30,8 @@ public class Statistic extends Application {
         Controller controller = fxmlLoader.getController();
         controller.loadData();
         controller.setParentWindow(stage);
+*/
+        System.out.println("Deprecated! Use ERDView");
     }
     
     @Override
