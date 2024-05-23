@@ -119,7 +119,7 @@ public class Report {
     }
 
     /**
-     * @param info the _info to set
+     * @param _info the _info to set
      */
     public void setInfo(String _info) {
         this._info = _info;
@@ -155,7 +155,7 @@ public class Report {
     }
 
     /**
-     * @param _date the _date to set
+     * @param ld the date to set
      */
     public void setDate(LocalDate ld) {
         this._date = formatter.format( ld );

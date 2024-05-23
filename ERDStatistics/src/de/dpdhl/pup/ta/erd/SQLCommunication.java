@@ -34,6 +34,8 @@ public class SQLCommunication {
     private static Properties   _PROPS         = new Properties();
     private static Connection   connection;
     
+    private static List<ITSystem> ALLITSYSTEMS = null;
+    
     static {
         Locale.setDefault(new Locale("en", "EN"));
     }
@@ -384,23 +386,27 @@ public class SQLCommunication {
      * @throws SQLException 
      */
     public static List<ITSystem> getITSystems() throws SQLException  {
-        List<ITSystem> alITSystems       = new ArrayList();
-        List<ITSystem> alNames           = getAllITSystems();
-        List<Integer>  sizeOfReports     = getIntValues("select count(*) from report group by ITSystem order by ITSystem;");
-        List<Integer>  sizeOfBandwidth   = getIntValues("select count(*) from bandwidth group by ITSystem order by ITSystem;");
-        List<Date>     listOfFirstDates  = getDateValues("select MIN(CreationDate) from report group by ITSystem order by ITSystem;");
-        List<Date>     listOfLastDates   = getDateValues("select MAX(CreationDate) from report group by ITSystem order by ITSystem;");
-        
-        int i=0;
-        for (ITSystem its : alNames) {
-            its.setSizeOfReports(sizeOfReports.get(i));
-            its.setSizeOfBandwidth(sizeOfBandwidth.get(i));
-            its.setFirstDate(listOfFirstDates.get(i));
-            its.setLastDate(listOfLastDates.get(i));
-            alITSystems.add(its);
-            i++;
+        if (ALLITSYSTEMS == null) {
+           List<ITSystem> alITSystems       = new ArrayList();
+           List<ITSystem> alNames           = getAllITSystems();
+           List<Integer>  sizeOfReports     = getIntValues("select count(*) from report group by ITSystem order by ITSystem;");
+           List<Integer>  sizeOfBandwidth   = getIntValues("select count(*) from bandwidth group by ITSystem order by ITSystem;");
+           List<Date>     listOfFirstDates  = getDateValues("select MIN(CreationDate) from report group by ITSystem order by ITSystem;");
+           List<Date>     listOfLastDates   = getDateValues("select MAX(CreationDate) from report group by ITSystem order by ITSystem;");
+
+           int i=0;
+           for (ITSystem its : alNames) {
+              its.setSizeOfReports(sizeOfReports.get(i));
+              its.setSizeOfBandwidth(sizeOfBandwidth.get(i));
+              its.setFirstDate(listOfFirstDates.get(i));
+              its.setLastDate(listOfLastDates.get(i));
+              alITSystems.add(its);
+              i++;
+           }
+           ALLITSYSTEMS = alITSystems;
         }
-        return alITSystems;
+        
+        return ALLITSYSTEMS;
     }
   
     public static List<Report>getReportsOfITSystem(int id) throws SQLException {
@@ -466,7 +472,7 @@ public class SQLCommunication {
     }
     
     public static List<Bandwidth> getMaxBandwidthOfITSystems() throws SQLException {
-        String sql = "select date, sum(maxbandwidthin), sum(maxbandwidthout) from maxbandwidth group by date order by date desc;";
+        String sql = "select date, sum(maxbandwidthin), sum(maxbandwidthout) from maxbandwidth where ITSystem > 1 group by date order by date desc;";
         List<Bandwidth> lB = getMaxBandwidth(sql);
         return lB;
     }
