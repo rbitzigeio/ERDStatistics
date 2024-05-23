@@ -35,7 +35,7 @@ CREATE TABLE `bandwidth` (
   UNIQUE KEY `UnixTime` (`UnixTime`,`ReportID`,`ITSystem`),
   KEY `idx_FormattedTime` (`FormattedTime`),
   KEY `idx_ReportID` (`ReportID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6489807 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11236054 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -69,8 +69,9 @@ CREATE TABLE `maxbandwidth` (
   `maxbandwidthout` double NOT NULL,
   `timein` datetime NOT NULL,
   `timeout` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=195 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `reportid_UNIQUE` (`reportid`)
+) ENGINE=InnoDB AUTO_INCREMENT=8787 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -117,4 +118,4 @@ CREATE TABLE `tmpstatistik` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-11-15 16:30:29
+-- Dump completed on 2024-05-17 14:10:56
