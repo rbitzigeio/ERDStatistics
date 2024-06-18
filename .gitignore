@@ -1,4 +1,4 @@
-ERDStatistics/build/
-ERDStatistics/dist/
-ERDStatistics/database/
-ERDStatistics/nbproject/
+/ERDStatistics/build/
+/ERDStatistics/dist/
+/ERDStatistics/database/dumps/*.sql
+/ERDStatistics/nbproject/
