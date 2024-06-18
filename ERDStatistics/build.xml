@@ -58,6 +58,7 @@
         <property name="HOST" value="localhost"/>
         <property name="PORT" value="3306"/>
         <property name="INSTANCE" value="erd"/>
+        <property name="DUMP_DIR" value="\\tsclient\C\Users\cyqjefe0019\\Projekte\\4610\\Azure\\Riverbed\\Dumps"/>
         <tstamp>
             <format property="DATE" pattern="yyyyMMdd"/>
         </tstamp>      
@@ -119,6 +120,7 @@
         <echo message="Zip exported files of Data, Stored Procedures and Functions of database ERD"/>
         <zip destfile="database/dumps_${DATE}.zip"
              basedir="database/dumps"/>
+        <copy file="database/dumps_${DATE}.zip" todir="${DUMP_DIR}"/>
     </target>
 
     <target name="db-import-database" description="import data of schema">
