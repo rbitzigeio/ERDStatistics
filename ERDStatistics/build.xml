@@ -50,59 +50,87 @@
     nbproject/build-impl.xml and nbproject/jfx-impl.xml.
 
     -->
-	<target name="db-export" 
-			description="export db data, structure and stored procedures" 
-	        depends="db-export-database, db-export-datastructure, db-export-storedprocedure">
-		<echo message="Export db data, structure and stored proceduresdatabase ERD into SQL-File"/>
-	</target>
+    <target name="db-init"
+            description="Initialize parameters for db export and import">
+        <echo message="Initialize parameters for db export and import"/>
+        <property name="USER" value="erd"/>
+        <property name="PW" value="erd"/>
+        <property name="HOST" value="localhost"/>
+        <property name="PORT" value="3306"/>
+        <property name="INSTANCE" value="erd"/>
+        <tstamp>
+            <format property="DATE" pattern="yyyyMMdd"/>
+        </tstamp>      
+        <!--
+        <echo message="${USER}"/>
+        <echo message="${PW}"/>
+        <echo message="${HOST}"/>
+        <echo message="${PORT}"/>
+        <echo message="${INSTANCE}"/>
+        <echo message="${DATE}"/>
+        -->
+    </target>
+         
+    <target name="db-export" 
+            description="export db data, structure and stored procedures and zip the files" 
+	    depends="db-init, db-export-database, db-export-datastructure, db-export-storedprocedure, db-export-zip">
+        <echo message="Export db data, structure and stored proceduresdatabase ERD into SQL-File"/>
+    </target>
 	
     <target name="db-export-database" description="export data of schema">
-		<echo message="Export data of database ERD into SQL-File"/>
-		<exec executable="mysqldump" output=".\database\dumps\data.sql">
-			<arg value="--user=erd"/>
-			<arg value="--password=erd"/>
-			<arg value="--host=localhost"/>
-			<arg value="--port=3306"/>
-			<arg value="erd"/>
-		</exec>
-	</target>
+        <echo message="Export data of database ERD into SQL-File"/>
+        <exec executable="mysqldump" output=".\database\dumps\data.sql">
+            <arg value="--user=${USER}"/>
+            <arg value="--password=${PW}"/>
+            <arg value="--host=${HOST}"/>
+            <arg value="--port=${PORT}"/>
+            <arg value="erd"/>
+	</exec>
+    </target>
 
-	<target name="db-export-datastructure" description="export only data structure of schema">
-		<echo message="Export data structure of database ERD into SQL-File"/>
-		<exec executable="mysqldump" output=".\database\dumps\datastructure.sql">
-			<arg value="--user=erd"/>
-			<arg value="--password=erd"/>
-			<arg value="--host=localhost"/>
-			<arg value="--port=3306"/>
-			<arg value="erd"/>
-			<arg value="--no-data"/>
-		</exec>
-	</target>
+    <target name="db-export-datastructure" description="export only data structure of schema">
+	<echo message="Export data structure of database ERD into SQL-File"/>
+	<exec executable="mysqldump" output=".\database\dumps\datastructure.sql">
+            <arg value="--user=${USER}"/>
+            <arg value="--password=${PW}"/>
+            <arg value="--host=${HOST}"/>
+            <arg value="--port=${PORT}"/>
+            <arg value="${INSTANCE}"/>
+            <arg value="--no-data"/>
+	</exec>
+    </target>
 
-        <target name="db-export-storedprocedure" description="export stored procedure and functions of schema">
-		<echo message="Export Stored Procedures and Functions of database ERD into SQL-File"/>
-		<exec executable="mysqldump" output=".\database\dumps\storedprocedure.sql">
-			<arg value="--user=erd"/>
-			<arg value="--password=erd"/>
-			<arg value="--host=localhost"/>
-			<arg value="--port=3306"/>
-			<arg value="erd"/>
-			<arg value="--no-data"/>
-			<arg value="--routines"/>
-		</exec>
-	</target>
+    <target name="db-export-storedprocedure" description="export stored procedure and functions of schema">
+	<echo message="Export Stored Procedures and Functions of database ERD into SQL-File"/>
+	<exec executable="mysqldump" output=".\database\dumps\storedprocedure.sql">
+            <arg value="--user=${USER}"/>
+            <arg value="--password=${PW}"/>
+            <arg value="--host=${HOST}"/>
+            <arg value="--port=${PORT}"/>
+            <arg value="erd"/>
+            <arg value="--no-data"/>
+            <arg value="--routines"/>
+	</exec>
+    </target>
 
-	<target name="db-import-database" description="import data of schema">
-		<echo message="Import data of database ERD from SQL-File"/>
-		
-	</target>
+    <target name="db-export-zip" 
+            description="zip exported files of data, stored procedure and functions of schema"
+            depends="db-init">
+        <echo message="Zip exported files of Data, Stored Procedures and Functions of database ERD"/>
+        <zip destfile="database/dumps_${DATE}.zip"
+             basedir="database/dumps"/>
+    </target>
+
+    <target name="db-import-database" description="import data of schema">
+	<echo message="Import data of database ERD from SQL-File"/>		
+    </target>
 	
-	<target name="db-import-datastructure" description="import only data structure of schema">
-		<echo message="Import data structure of database ERD from SQL-File"/>
-	</target>
+    <target name="db-import-datastructure" description="import only data structure of schema">
+	<echo message="Import data structure of database ERD from SQL-File"/>
+    </target>
 
-        <target name="db-import-storedprocedure" description="import stored proceudre and functions of schema">
-		<echo message="Import Stored Procedures and Functions of database ERD from SQL-File"/>
-	</target>
+    <target name="db-import-storedprocedure" description="import stored proceudre and functions of schema">
+	<echo message="Import Stored Procedures and Functions of database ERD from SQL-File"/>
+    </target>
 
 </project>
