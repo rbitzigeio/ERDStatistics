@@ -148,6 +148,45 @@ public class SQLCommunication {
         }
     }
     
+    public static void insertRBUPosition(String pKundenOrganisation, 
+                                         String pKostenstelle,
+                                         int    pLS, 
+                                         String pLSName, 
+                                         int    pArtikel, 
+                                         String pArtikelbezeichnung, 
+                                         String pMengeneinheit, 
+                                         String pAbrechnungsbezug,
+                                         String pBestellung, 
+                                         String pITService, 
+                                         String pTechnischesObjekt,
+                                         String pBemerkung, 
+                                         Double pMenge, 
+                                         Double pPreis, 
+                                         Double pTotalEUR) throws SQLException {
+        SQLCommunication com = new SQLCommunication();
+        Connection con = com.getConnection();
+        if (con != null) {
+
+            CallableStatement cs = (CallableStatement) con.prepareCall("{call insertRBUPosition(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+            int i = 1;
+            cs.setString(i++, pKundenOrganisation);
+            cs.setString(i++, pKostenstelle);
+            cs.setInt(i++, pLS);
+            cs.setString(i++, pLSName);
+            cs.setInt(i++, pArtikel);
+            cs.setString(i++, pMengeneinheit);
+            cs.setString(i++, pAbrechnungsbezug);
+            cs.setString(i++, pBestellung);
+            cs.setString(i++, pITService);
+            cs.setString(i++, pTechnischesObjekt);
+            cs.setString(i++, pBemerkung);
+            cs.setDouble(i++, pMenge);
+            cs.setDouble(i++, pPreis);
+            cs.setDouble(i++, pTotalEUR);
+            cs.execute();
+        }
+    }
+    
     public static void insertEntity(int uTime, String sDate, double dIn, double dOut, int reportId, int itSystemId) throws Exception {
         SQLCommunication com = new SQLCommunication();
         Connection con = com.getConnection();

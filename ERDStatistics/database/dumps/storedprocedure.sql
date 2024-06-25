@@ -1,4 +1,3 @@
-mysqldump: [Warning] Using a password on the command line interface can be insecure.
 -- MySQL dump 10.13  Distrib 8.0.32, for Win64 (x86_64)
 --
 -- Host: localhost    Database: erd
@@ -35,7 +34,7 @@ CREATE TABLE `bandwidth` (
   UNIQUE KEY `UnixTime` (`UnixTime`,`ReportID`,`ITSystem`),
   KEY `idx_FormattedTime` (`FormattedTime`),
   KEY `idx_ReportID` (`ReportID`)
-) ENGINE=InnoDB AUTO_INCREMENT=11236054 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12060197 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -45,10 +44,11 @@ CREATE TABLE `bandwidth` (
 DROP TABLE IF EXISTS `itsystem`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `itsystem` (
+mysqldump: [Warning] Using a password on the command line interface can be insecure.CREATE TABLE `itsystem` (
   `NAME` varchar(32) NOT NULL,
   `ID` int NOT NULL,
   `ICTO` varchar(32) DEFAULT NULL,
+
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -71,7 +71,7 @@ CREATE TABLE `maxbandwidth` (
   `timeout` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `reportid_UNIQUE` (`reportid`)
-) ENGINE=InnoDB AUTO_INCREMENT=8787 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9360 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -351,4 +351,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-17 14:10:57
+-- Dump completed on 2024-06-18 11:39:14
