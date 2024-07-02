@@ -30,8 +30,9 @@ public class SQLCommunication {
     
     //private static final String DATABASE_DRIVER = "com.mysql.cj.jdbc.Driver";
     //private static final String DATABASE_URL    = "jdbc:mysql://localhost:3306/ERD";
-    private static final String _PROPERTY_FILE = ".ERD.properties"; 
-    private static Properties   _PROPS         = new Properties();
+    public static String _DBINSTANCE;
+    public static String _PROPERTY_FILE;
+    private static Properties   _PROPS = new Properties();
     private static Connection   connection;
     
     private static List<ITSystem> ALLITSYSTEMS = null;
@@ -40,6 +41,11 @@ public class SQLCommunication {
         Locale.setDefault(new Locale("en", "EN"));
     }
 
+    public static void setDBInstance(String instance) {
+        _DBINSTANCE = instance;
+        _PROPERTY_FILE = "." + _DBINSTANCE + ".properties";
+    }
+    
     private static List<Date> getDateValues(String sql) throws SQLException {
         SQLCommunication com      = new SQLCommunication();
         Connection       con      = com.getConnection();
@@ -122,6 +128,9 @@ public class SQLCommunication {
             if (home == null) {
                 home = System.getenv("HOME");
             }
+            if (_PROPERTY_FILE == null) {
+                _PROPERTY_FILE = ".ERD.properties";
+            }
             String propFile = home + "/" + _PROPERTY_FILE;
             try {
                 FileInputStream in = new FileInputStream(propFile);
@@ -152,7 +161,7 @@ public class SQLCommunication {
                                          String pKostenstelle,
                                          int    pLS, 
                                          String pLSName, 
-                                         int    pArtikel, 
+                                         String pArtikel, 
                                          String pArtikelbezeichnung, 
                                          String pMengeneinheit, 
                                          String pAbrechnungsbezug,
@@ -167,13 +176,14 @@ public class SQLCommunication {
         Connection con = com.getConnection();
         if (con != null) {
 
-            CallableStatement cs = (CallableStatement) con.prepareCall("{call insertRBUPosition(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+            CallableStatement cs = (CallableStatement) con.prepareCall("{call insertRBUPosition(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
             int i = 1;
             cs.setString(i++, pKundenOrganisation);
             cs.setString(i++, pKostenstelle);
             cs.setInt(i++, pLS);
             cs.setString(i++, pLSName);
-            cs.setInt(i++, pArtikel);
+            cs.setString(i++, pArtikel);
+            cs.setString(i++, pArtikelbezeichnung);
             cs.setString(i++, pMengeneinheit);
             cs.setString(i++, pAbrechnungsbezug);
             cs.setString(i++, pBestellung);
@@ -185,6 +195,31 @@ public class SQLCommunication {
             cs.setDouble(i++, pTotalEUR);
             cs.execute();
         }
+    }
+    
+    public static void insertRBUAbrechnungsmonat(String monat, String fileName) throws Exception {
+        SQLCommunication com = new SQLCommunication();
+        Connection con = com.getConnection();
+        if (con != null) {
+            CallableStatement cs = (CallableStatement) con.prepareCall("{call insertRBUAbrechnungsmonat(?,?)}");
+            cs.setString(1, monat);
+            cs.setString(2, fileName);
+            cs.execute();
+        }
+    }
+    
+    public static boolean checkRBUAbrechnungsmonat(String monat) throws Exception {
+        SQLCommunication com = new SQLCommunication();
+        Connection con = com.getConnection();
+        boolean idExists = false;
+        if (con != null) {
+            CallableStatement cs = (CallableStatement) con.prepareCall("{? = call checkAbrechnungsmonat(?)}");
+            cs.setString(2, monat);
+            cs.registerOutParameter(1, Types.BOOLEAN);
+            cs.execute();
+            idExists = cs.getBoolean(1);
+        }
+        return idExists;
     }
     
     public static void insertEntity(int uTime, String sDate, double dIn, double dOut, int reportId, int itSystemId) throws Exception {
@@ -628,5 +663,29 @@ public class SQLCommunication {
             }
         }
         return extrem;
+    }
+    
+     public  static List<RBU> getRBUList() throws Exception {
+        SQLCommunication con = new SQLCommunication();
+        List<RBU> listOfRBUs = con.getListOfRBU();
+        return listOfRBUs;
+    }
+    
+    private List<RBU> getListOfRBU() throws Exception {
+        List<RBU> alValues = new ArrayList<>();
+        SQLCommunication com = new SQLCommunication();
+        Connection       con = com.getConnection();
+        if (con != null) {
+            Statement statement = con.createStatement();
+            String sql = "select * from rbu.rbu order by Abrechnungsbezug;";
+            System.out.println(sql);
+            ResultSet rs = statement.executeQuery(sql);
+            int i = 0;
+            while(rs.next()) {
+                i++;
+            }
+            System.out.println(i);
+        }
+        return alValues;
     }
 }
