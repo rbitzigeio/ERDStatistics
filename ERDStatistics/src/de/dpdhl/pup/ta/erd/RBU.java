@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class RBU {
     
- private int     ID; // in db UUID
+    private String  ID; // in db UUID
     private int     LS;
     
     private String  artikel;
@@ -38,14 +38,14 @@ public class RBU {
     /**
      * @return the ID
      */
-    public int getID() {
+    public String getID() {
         return ID;
     }
 
     /**
      * @param ID the ID to set
      */
-    public void setID(int ID) {
+    public void setID(String ID) {
         this.ID = ID;
     }
 

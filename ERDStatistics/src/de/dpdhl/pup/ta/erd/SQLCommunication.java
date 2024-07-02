@@ -678,13 +678,32 @@ public class SQLCommunication {
         if (con != null) {
             Statement statement = con.createStatement();
             String sql = "select * from rbu.rbu order by Abrechnungsbezug;";
-            System.out.println(sql);
+            //System.out.println(sql);
             ResultSet rs = statement.executeQuery(sql);
             int i = 0;
             while(rs.next()) {
                 i++;
+                RBU rbu = new RBU();
+                //System.out.println(i);
+                rbu.setID(rs.getString(1));
+                rbu.setKundenOrganisation(rs.getString(2));
+                rbu.setKostenstelle(rs.getString(3));
+                rbu.setLS(rs.getInt(4));
+                rbu.setLSName(rs.getString(5));
+                rbu.setArtikel(rs.getString(6));
+                rbu.setArtikelBezeichnung(rs.getString(7));
+                rbu.setMengenEinheit(rs.getString(8));
+                rbu.setAbrechnungsBezug(rs.getString(9));
+                rbu.setBestellung(rs.getString(10));
+                rbu.setItService(rs.getString(11));
+                rbu.setTechnischesObjekt(rs.getString(12));
+                rbu.setBemerkung(rs.getString(13));
+                rbu.setMenge(rs.getDouble(14));
+                rbu.setPreis(rs.getDouble(15));
+                rbu.setTotalEUR(rs.getDouble(16));
+                alValues.add(rbu);
             }
-            System.out.println(i);
+            //System.out.println(i);
         }
         return alValues;
     }
