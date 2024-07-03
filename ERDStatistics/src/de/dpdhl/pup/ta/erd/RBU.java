@@ -32,6 +32,31 @@ public class RBU {
     private double preis;
     private double totalEUR;
     
+    private static final String[] _DB_COLUMN_NAMES = new String[15];
+    
+    static {
+        int i = 0;
+        _DB_COLUMN_NAMES[i++] = "ID";
+        _DB_COLUMN_NAMES[i++] = "Kostenstelle";
+        _DB_COLUMN_NAMES[i++] = "LS";
+        _DB_COLUMN_NAMES[i++] = "LSName";
+        _DB_COLUMN_NAMES[i++] = "Artikel";
+        _DB_COLUMN_NAMES[i++] = "Artikelbezeichnung";
+        _DB_COLUMN_NAMES[i++] = "Mengeneinheit";
+        _DB_COLUMN_NAMES[i++] = "Abrechnungsbezug";
+        _DB_COLUMN_NAMES[i++] = "Bestellung";
+        _DB_COLUMN_NAMES[i++] = "ITService";
+        _DB_COLUMN_NAMES[i++] = "TechnischesObjekt";
+        _DB_COLUMN_NAMES[i++] = "Bemerkung";
+        _DB_COLUMN_NAMES[i++] = "Menge";
+        _DB_COLUMN_NAMES[i++] = "Preis";
+        _DB_COLUMN_NAMES[i++] = "TotalEUR";
+    }
+    
+    public static String[] getTitles() {
+        return _DB_COLUMN_NAMES;
+    }
+    
     public RBU() {
     }
 
@@ -259,6 +284,29 @@ public class RBU {
         this.totalEUR = totalEUR;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getID()); sb.append(";");
+        sb.append(this.getKostenstelle()); sb.append(";");
+        sb.append(this.getLS()); sb.append(";");
+        sb.append(this.getLSName()); sb.append(";");
+        sb.append(this.getArtikel()); sb.append(";");
+        sb.append(this .getArtikelBezeichnung()); sb.append(";");
+        sb.append(this.getMengenEinheit()); sb.append(";");
+        sb.append(this.getAbrechnungsBezug()); sb.append(";");
+        sb.append(this.getBestellung()); sb.append(";");
+        sb.append(this.getItService()); sb.append(";");
+        sb.append(this.getTechnischesObjekt()); sb.append(";");
+        sb.append(this.getBemerkung()); sb.append(";");
+        sb.append(this.getMenge()); sb.append(";");
+        sb.append(this.getPreis()); sb.append(";");
+        sb.append(this.getTotalEUR()); sb.append(";");
+                        
+        return sb.toString();
+    }
+    
+    
     public static boolean isLoaded(String month) throws Exception {
        boolean isLoaded = false;
        isLoaded = SQLCommunication.checkRBUAbrechnungsmonat(month);
