@@ -1,4 +1,4 @@
-/build
-/dist
-/database/dumps
-/nbproject
+/ERDStatistics/build
+/ERDStatistics/dist
+/ERDStatistics/database/dumps
+/ERDStatistics/nbproject
