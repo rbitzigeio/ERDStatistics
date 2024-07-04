@@ -1,7 +1,4 @@
-/build/
-/dist/
-/database/dumps/
-/project.properties
-
-/ERDStatistics/build
-/ERDStatistics/database/dumps
+/build
+/dist
+/database/dumps
+/nbproject
