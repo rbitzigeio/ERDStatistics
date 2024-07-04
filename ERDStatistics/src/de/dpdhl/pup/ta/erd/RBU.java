@@ -299,9 +299,9 @@ public class RBU {
         sb.append(this.getItService()); sb.append(";");
         sb.append(this.getTechnischesObjekt()); sb.append(";");
         sb.append(this.getBemerkung()); sb.append(";");
-        sb.append(this.getMenge()); sb.append(";");
-        sb.append(this.getPreis()); sb.append(";");
-        sb.append(this.getTotalEUR()); sb.append(";");
+        sb.append(Double.toString(this.getMenge()).replace(".",",")); sb.append(";"); // Convert"." to ","
+        sb.append(Double.toString(this.getPreis()).replace(".",",")); sb.append(";");
+        sb.append(Double.toString(this.getTotalEUR()).replace(".",",")); sb.append(";");
                         
         return sb.toString();
     }
